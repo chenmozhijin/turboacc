@@ -9,14 +9,6 @@ EXTRA_COMMANDS="check_status"
 EXTRA_HELP="	check_status Check running status of utils"
 
 restart_utils="true"
-PS="/bin/busybox ps"
-
-kernel_mod_exist() {
-	local mod_name="$1"
-	[ -n "$mod_name" ] && {
-	        [ "$(lsmod | grep -c "${mod_name}")" -gt "0" ] || [ -e "/lib/modules/$(uname -r)/${mod_name}.ko" ]
-	}
-}
 
 inital_conf(){
 	config_load "turboacc"
@@ -25,15 +17,9 @@ inital_conf(){
 	config_get "sfe_flow" "config" "sfe_flow" "0"
 	config_get "bbr_cca" "config" "bbr_cca" "0"
 	config_get "fullcone_nat" "config" "fullcone_nat" "0"
-	if !  kernel_mod_exist "nft_flow_offload"  ; then
-	        sw_flow="0"; hw_flow="0";
-	fi
-	if !  kernel_mod_exist "shortcut-fe-cm" ; then
-	        sfe_flow="0"
-	fi
-	if !  kernel_mod_exist "nft_fullcone" ; then
-	        fullcone_nat="0"
-	fi
+
+	[ ! -e "/lib/modules/$(uname -r)/mtkhnat.ko" ] && hw_flow="0";
+	[ ! -e "/lib/modules/$(uname -r)/nft_flow_offload.ko" ] && { sw_flow="0"; hw_flow="0"; }
 	[ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] && bbr_cca="0"
 }
 
@@ -57,8 +43,6 @@ start(){
 	uci set firewall.@defaults[0].fullcone="${fullcone_nat}"
 	uci commit firewall
 
-    /etc/init.d/turboacc_fss start
-    
 	[ "${sw_flow}" -eq "0" ] && [ "${hw_flow}" -eq "1" ] && {
 		lsmod | grep -q mtkhnat || modprobe mtkhnat
 	}
@@ -112,11 +96,6 @@ restart(){
 	/etc/init.d/firewall restart >"/dev/null" 2>&1
 }
 
-have_ecm_init() {
-	[ -d "/etc/init.d/qca-nss-ecm" ] && echo 1 && return
-	echo 0
-}
-
 check_status(){
 	case "$1" in
 	"fastpath")
@@ -144,14 +123,18 @@ check_status(){
 		fi
 		;;
 	"fullconenat")
-		if [ "$(cat "/sys/module/nft_fullcone/refcnt" 2>"/dev/null" || echo -1)" -gt "0" ]; then
+    	if [ "$(cat "/sys/module/nft_fullcone/refcnt" 2>"/dev/null" || echo -1)" -gt "0" ]; then
 			exit 0
 		else
 			exit 1
 		fi
 		;;
+	"bbr")
+		[ "x$(cat "/proc/sys/net/ipv4/tcp_congestion_control" 2>"/dev/null")" = "xbbr" ] && \
+			exit 0 || exit 1
+		;;
 	*)
 		exit 2
 		;;
 	esac
-}
+}		
