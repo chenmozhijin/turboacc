@@ -1,5 +1,5 @@
 # luci-app-turboacc
-一个兼容官方openwrt firewall4(22.03)的turboacc
+一个兼容官方openwrt(22.03) firewall4的turboacc
 
 需要的依赖/䃼丁:
 https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe
