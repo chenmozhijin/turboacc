@@ -1,7 +1,7 @@
 # turboacc
 兼容官方openwrt(22.03) firewall4的turboacc的依赖
 ## 使用方法
- 1.cd package并Clone 项目
+ 1.Clone 项目
  ```
  cd package
  git clone https://github.com/chenmozhijin/turboacc -b package
