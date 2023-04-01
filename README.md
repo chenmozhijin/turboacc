@@ -16,7 +16,7 @@ Shortcut-FE需要：
 
 如果编译22.03.3则可以使用 https://github.com/chenmozhijin/turboacc/tree/package
 
-编译全锥型 NAT很麻烦并容易编译出错如果要编译请先看看[Nftables 全锥型 NAT实现](https://github.com/Chion82/netfilter-full-cone-nat/issues/42)
+编译全锥型 NAT很麻烦并容易编译出错如果要编译请先阅读[Nftables 全锥型 NAT实现](https://github.com/Chion82/netfilter-full-cone-nat/issues/42)
 
 
 
