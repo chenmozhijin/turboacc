@@ -3,7 +3,7 @@
 包括以下功能：软件流量分载、Shortcut-FE、全锥型 NAT、BBR 拥塞控制算法
 
 
-##需要的依赖/䃼丁
+## 需要的依赖/䃼丁
 Shortcut-FE需要：
 [ fast-classifier、shortcut-fe、simulated-driver ](https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe)、[ 952-net-conntrack-events-support-multiple-registrant.patch ](https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch)、[953-net-patch-linux-kernel-to-support-shortcut-fe.patch](https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch)
 
