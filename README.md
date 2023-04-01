@@ -11,8 +11,10 @@
  2.移动hack-5.10中的patch到 openwrt/target/linux/generic/hack-5.10
  
  3.移动turboacc/firewall4-XXX/firewall4到openwrt/package/network/config/firewall4 
- 移动turboacc/nftables-X.X.X/nftables到openwrt/package/network/utils/nftables 
- 移动turboacc/libs-X.X.X/libnftnl到openwrt/package/libs/libnftn
+ 
+  移动turboacc/nftables-X.X.X/nftables到openwrt/package/network/utils/nftables 
+ 
+  移动turboacc/libs-X.X.X/libnftnl到openwrt/package/libs/libnftn
  
 ## 来自
 https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe 
