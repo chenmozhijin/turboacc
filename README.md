@@ -15,6 +15,7 @@ Shortcut-FE需要：
 [libnftnl patch](https://github.com/wongsyrone/lede-1/blob/master/package/libs/libnftnl/patches/999-01-libnftnl-add-fullcone-expression-support.patch)或[firewall4修补的存储库](https://github.com/wongsyrone/openwrt-firewall4-with-fullcone)、nftables修补的存储库](https://github.com/wongsyrone/nftables-1.0.2-with-fullcone)与[libnftnl修补的存储库](https://github.com/wongsyrone/libnftnl-1.2.1-with-fullcone)
 
 如果编译22.03.3则可以使用 https://github.com/chenmozhijin/turboacc/tree/package
+
 编译全锥型 NAT很麻烦并容易编译出错如果要编译请先看看[Nftables 全锥型 NAT实现](https://github.com/Chion82/netfilter-full-cone-nat/issues/42)
 
 
