@@ -12,7 +12,7 @@ Shortcut-FE需要：
 修补firewall4、libnftnl和nftables需要：
 [firewall4 patch](https://github.com/wongsyrone/lede-1/blob/master/package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch)、
 [nftables patch](https://github.com/wongsyrone/lede-1/blob/master/package/network/utils/nftables/patches/999-01-nftables-add-fullcone-expression-support.patch)与
-[libnftnl patch](https://github.com/wongsyrone/lede-1/blob/master/package/libs/libnftnl/patches/999-01-libnftnl-add-fullcone-expression-support.patch)或[firewall4修补的存储库](https://github.com/wongsyrone/openwrt-firewall4-with-fullcone)、nftables修补的存储库](https://github.com/wongsyrone/nftables-1.0.2-with-fullcone)与[libnftnl修补的存储库](https://github.com/wongsyrone/libnftnl-1.2.1-with-fullcone)
+[libnftnl patch](https://github.com/wongsyrone/lede-1/blob/master/package/libs/libnftnl/patches/999-01-libnftnl-add-fullcone-expression-support.patch)或[firewall4修补的存储库](https://github.com/wongsyrone/openwrt-firewall4-with-fullcone)、[nftables修补的存储库](https://github.com/wongsyrone/nftables-1.0.2-with-fullcone)与[libnftnl修补的存储库](https://github.com/wongsyrone/libnftnl-1.2.1-with-fullcone)
 
 如果编译22.03.3则可以使用 https://github.com/chenmozhijin/turboacc/tree/package
 
