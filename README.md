@@ -1,5 +1,5 @@
 # turboacc
-兼容官方openwrt(22.03) firewall4的turboacc的依赖
+兼容官方openwrt(22.03) firewall4的 turboacc的依赖
 ## 使用方法
  1.Clone 项目
  ```
@@ -14,7 +14,7 @@
  
   移动turboacc/nftables-X.X.X/nftables到openwrt/package/network/utils/nftables 
  
-  移动turboacc/libs-X.X.X/libnftnl到openwrt/package/libs/libnftn
+  移动turboacc/libs-X.X.X/libnftnl到openwrt/package/libs/libnftn覆盖原文件
  
 ## 来自
 https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe 
