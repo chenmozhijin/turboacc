@@ -1,6 +1,10 @@
 name: update package
-
+permissions:
+  pull-requests: write
+  contents: write
 on:
+  schedule:
+    - cron: '0 3 * * *'
   push:
     branches: [ "package" ]
 jobs:
