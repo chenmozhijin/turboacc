@@ -1,5 +1,6 @@
 # SPDX-Identifier-License: GPL-3.0-only
 #
+# Copyright (C) 2023 沉默の金 <cmzj11@gmail.com>
 # Copyright (C) 2022 Lean <coolsnowwolf@gmail.com>
 # Copyright (C) 2019-2022 ImmortalWrt.org
 
