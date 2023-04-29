@@ -5,6 +5,9 @@ permissions:
 on:
   schedule:
     - cron: '0 3 * * *'
+  push:
+    paths:
+      - '.github/**'
 jobs:
   build:
 
