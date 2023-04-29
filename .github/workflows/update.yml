@@ -28,6 +28,7 @@ jobs:
           cd lede
           cd ..
           cp -r ./lede/package/lean/shortcut-fe ./shortcut-fe
+          rm -rf lede
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5.0.0
       with:
