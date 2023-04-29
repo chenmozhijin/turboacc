@@ -1,5 +1,5 @@
 # luci-app-turboacc
-一个兼容官方openwrt(22.03) firewall4的turboacc
+一个适用于官方openwrt(22.03) firewall4的turboacc
 包括以下功能：软件流量分载、Shortcut-FE、全锥型 NAT、BBR 拥塞控制算法
 
 
@@ -7,7 +7,7 @@
 Shortcut-FE需要：
 [ fast-classifier、shortcut-fe、simulated-driver ](https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe)、[ 952-net-conntrack-events-support-multiple-registrant.patch ](https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch)、[953-net-patch-linux-kernel-to-support-shortcut-fe.patch](https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch)
 
-全锥型 NAT需要：[nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone)、[982-add-bcm-fullconenat-support.patch](https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/982-add-bcm-fullconenat-support.patch)并为新的“fullcone”语句修补firewall4、libnftnl和nftables
+全锥型 NAT需要：[nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone)、[ 952-net-conntrack-events-support-multiple-registrant.patch ](https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch)、并为新的“fullcone”语句修补firewall4、libnftnl和nftables
 
 修补firewall4、libnftnl和nftables需要：
 [firewall4 patch](https://github.com/wongsyrone/lede-1/blob/master/package/network/config/firewall4/patches/999-01-firewall4-add-fullcone-support.patch)、
@@ -47,6 +47,12 @@ make menuconfig
 +  如果不需要sfe建议删除 target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
 +  如果你只是想要一个带turboacc官方稳定版openwrt可以看看[我的OpenWrt自动编译](https://github.com/chenmozhijin/OpenWrt-K)
+
+## 感谢
+ 感谢以下项目：
+ +    [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)
+ +    [wongsyrone/lede-1](https://github.com/wongsyrone/lede-1)
+ +    [nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone)
 
 
 
