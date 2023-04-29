@@ -46,5 +46,7 @@ make menuconfig
 +  在 > LuCI > 3. Applications中选中luci-app-turboacc
 +  如果不需要sfe建议删除 target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
++  如果你只是想要一个带turboacc官方稳定版openwrt可以看看[我的OpenWrt自动编译](https://github.com/chenmozhijin/OpenWrt-K)
+
 
 
