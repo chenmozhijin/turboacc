@@ -7,7 +7,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-turboacc
-PKG_RELEASE:=$(COMMITCOUNT)
+PKG_VERSION:=1.0
+PKG_RELEASE:=1
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_MAINTAINER:=chenmozhijin <cmzj11@gmail.com>
