@@ -47,7 +47,9 @@ make menuconfig
 +  如果不需要sfe建议删除 target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
 +  如果你只是想要一个带turboacc官方稳定版openwrt可以看看[我的OpenWrt自动编译](https://github.com/chenmozhijin/OpenWrt-K)
+## 插件预览
 
+![插件预览](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
 ## 感谢
  感谢以下项目：
  +    [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)
