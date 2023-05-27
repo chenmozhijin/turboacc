@@ -6,12 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        sdk_url:
-          - https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -29,7 +23,7 @@ jobs:
 
     - name: Download SDK
       run: |
-        url=${{ matrix.sdk_url }}
+        url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
         sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
 
         wget $url
