@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - luci-app-turboacc-add-mtk-wed-config-support
+      - luci
     paths:
       - '.github/**'
 jobs:
@@ -44,14 +44,20 @@ jobs:
 
     - name: Compile
       run: |
-        url=${{ matrix.sdk_url }}
+        url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
         sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
 
         cd $sdk
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
         echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
         make defconfig
         
-        make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc || exit 0
+        make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc
 
         # cp file to artifact
         cd ${{ github.workspace }}
@@ -65,4 +71,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: luci-app-turboacc
-        path: ${{ github.workspace }}/artifact/**/*
+        path: ${{ github.workspace }}/artifact/**
