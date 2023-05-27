@@ -25,8 +25,8 @@ git clone https://github.com/chenmozhijin/turboacc
 mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
 rm -rf ./turboacc
 cd ../..
-cp turboacc_tmp/turboacc/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.10
-cp turboacc_tmp/turboacc/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.10
+cp turboacc_tmp/turboacc/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.10 || cp turboacc_tmp/turboacc/hack-5.15/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.15
+cp turboacc_tmp/turboacc/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.10 || cp turboacc_tmp/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.15
 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
@@ -44,7 +44,7 @@ rm -rf turboacc_tmp
 make menuconfig
 ```
 +  在 > LuCI > 3. Applications中选中luci-app-turboacc
-+  如果不需要sfe建议删除 target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
++  如果不需要sfe建议删除 target/linux/generic/hack-x.xx/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
 +  如果你只是想要一个带turboacc官方稳定版openwrt可以看看[我的OpenWrt自动编译](https://github.com/chenmozhijin/OpenWrt-K)
 ## 插件预览
