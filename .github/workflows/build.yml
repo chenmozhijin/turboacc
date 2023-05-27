@@ -11,17 +11,15 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-    - name: 清理空间
-      run:  |
+      - name: 清理空间
+        run:  |
           sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php
           sudo -E apt-mark hold grub-efi-amd64-signed
           sudo -E apt update
           sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* moby* snap*
-    - name: Checkout
-      uses: actions/checkout@main
 
-    - name: 安装编译依赖
-      run: |
+      - name: 安装编译依赖
+        run: |
           sudo -E apt-mark hold grub-efi-amd64-signed
           sudo -E apt update
           sudo -E apt -y full-upgrade
@@ -31,44 +29,54 @@ jobs:
           sudo -E apt clean
           sudo timedatectl set-timezone "Asia/Shanghai"
 
-    - name: Download SDK
-      run: |
-        url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
+      - name: 下载SDK
+        run: |
+          url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
 
-        wget $url
-        tar xvf $sdk.tar.xz
+          wget -O openwrt.tar.xz $url
+          tar xvf openwrt.tar.xz
+          cd openwrt
+          export OPENWRT_ROOT_PATH="$(pwd)"
+          echo "OPENWRT_ROOT_PATH=$OPENWRT_ROOT_PATH" >> $GITHUB_ENV
 
-        mkdir -p $sdk/package
-        cp -r luci-app-turboacc $sdk/package/
+      - name: 将存储库签出到运行器
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.CMZJ_PACKAGE_ROOT_PATH }}/package/
 
-    - name: Compile
-      run: |
-        url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-        sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
+      - name: 更新 feeds 
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          
 
-        cd $sdk
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-        echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
-        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
-        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
-        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
-        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
-        make defconfig
-        
-        make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc
+      - name: 加载自定义配置并生成配置文件
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
+          ./scripts/diffconfig.sh
 
-        # cp file to artifact
-        cd ${{ github.workspace }}
-        mkdir -p ${{ github.workspace }}/artifact
+      - name: 编译
+        working-directory:  ${{ env.CMZJ_PACKAGE_ROOT_PATH }}
+        run: |
+          make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc
 
-        for ipk in `find . -name 'luci-app-turboacc*.ipk'`; do
-          cp $ipk ${{ github.workspace }}/artifact
-        done
+      - name: 准备 artifact
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          mkdir -p ./artifact
+          cp -rf $(find ./bin/packages/ -type f -name "luci-app-turboacc*.ipk") ./artifact
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: luci-app-turboacc
-        path: ${{ github.workspace }}/artifact/**
+      - name: 上传build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: luci-app-turboacc
+          path: ${{ github.workspace }}/artifact/**
