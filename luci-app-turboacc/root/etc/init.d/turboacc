@@ -19,7 +19,6 @@ inital_conf(){
 	config_get "bbr_cca" "config" "bbr_cca" "0"
 	config_get "fullcone_nat" "config" "fullcone_nat" "0"
 
-	[ ! -e "/lib/modules/$(uname -r)/mtkhnat.ko" ] && hw_flow="0";
 	[ ! -e "/lib/modules/$(uname -r)/nft_flow_offload.ko" ] && { sw_flow="0"; hw_flow="0"; }
 	[ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] && bbr_cca="0"
 }
