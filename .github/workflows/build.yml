@@ -1,0 +1,62 @@
+name: Build luci-app-turboacc
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - luci-app-turboacc-add-mtk-wed-config-support
+    paths:
+      - '.github/**'
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: 安装编译依赖
+      run: |
+          sudo -E apt-mark hold grub-efi-amd64-signed
+          sudo -E apt update
+          sudo -E apt -y full-upgrade
+          sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils clang g++ python3-distutils rsync unzip zlib1g-dev wget
+          sudo -E systemctl daemon-reload 
+          sudo -E apt -y autoremove --purge
+          sudo -E apt clean
+          sudo timedatectl set-timezone "Asia/Shanghai"
+
+    - name: Download SDK
+      run: |
+        url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+        sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
+
+        wget $url
+        tar xvf $sdk.tar.xz
+
+        mkdir -p $sdk/package
+        cp -r luci-app-turboacc $sdk/package/
+
+    - name: Compile
+      run: |
+        url=${{ matrix.sdk_url }}
+        sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
+
+        cd $sdk
+        echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
+        make defconfig
+        
+        make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc || exit 0
+
+        # cp file to artifact
+        cd ${{ github.workspace }}
+        mkdir -p ${{ github.workspace }}/artifact
+
+        for ipk in `find . -name 'luci-app-turboacc*.ipk'`; do
+          cp $ipk ${{ github.workspace }}/artifact
+        done
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: luci-app-turboacc
+        path: ${{ github.workspace }}/artifact/**/*
