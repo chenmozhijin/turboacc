@@ -45,7 +45,11 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
-        make defconfig
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
+        echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
+        #make defconfig
         
         make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc
 
