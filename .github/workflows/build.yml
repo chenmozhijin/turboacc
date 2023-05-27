@@ -62,6 +62,7 @@ jobs:
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
+          make defconfig
           ./scripts/diffconfig.sh
 
       - name: 编译
