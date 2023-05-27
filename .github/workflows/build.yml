@@ -59,4 +59,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: luci-app-turboacc
-        path: ${{ github.workspace }}/artifact/**/*
+        path: ${{ github.workspace }}/artifact/**
