@@ -18,7 +18,6 @@ sw_flow.description = translate("Software based offloading for routing/NAT")
 sw_flow:depends("sfe_flow", 0)
 end
 
-
 if luci.sys.call("cat /etc/openwrt_release | grep -Eq 'filogic|mt762' ") == 0 then
 hw_flow = s:option(Flag, "hw_flow", translate("Hardware flow offloading"))
 hw_flow.default = 0
