@@ -2,7 +2,11 @@ name: Build luci-app-turboacc
 
 on:
   workflow_dispatch:
-
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/**'
 jobs:
   build:
     runs-on: ubuntu-20.04
