@@ -44,17 +44,6 @@ jobs:
         with:
           path: ${{ env.OPENWRT_ROOT_PATH }}/package/chenmozhijin-package
 
-
-      - name: test
-        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
-        run: |
-         ls
-         echo 1
-         ls ${{ env.OPENWRT_ROOT_PATH }}/package/chenmozhijin-package
-         echo 2
-         ls ${{ env.OPENWRT_ROOT_PATH }}/package
-
-
       - name: 更新 feeds 
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
@@ -76,7 +65,7 @@ jobs:
           ./scripts/diffconfig.sh
 
       - name: 编译
-        working-directory:  ${{ env.CMZJ_PACKAGE_ROOT_PATH }}
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
           make package/chenmozhijin-package/luci-app-turboacc/compile -j$(nproc) || make package/chenmozhijin-package/luci-app-turboacc/compile -j1 V=sc
 
