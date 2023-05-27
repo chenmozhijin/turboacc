@@ -12,13 +12,13 @@ restart_utils="true"
 
 inital_conf(){
 	config_load "turboacc"
-	config_get "sw_flow" "config" "sw_flow" "0"
+	config_get "hw_wed" "config" "hw_wed" "0"
 	config_get "hw_flow" "config" "hw_flow" "0"
+	config_get "sw_flow" "config" "sw_flow" "0"
 	config_get "sfe_flow" "config" "sfe_flow" "0"
 	config_get "bbr_cca" "config" "bbr_cca" "0"
 	config_get "fullcone_nat" "config" "fullcone_nat" "0"
 
-	[ ! -e "/lib/modules/$(uname -r)/mtkhnat.ko" ] && hw_flow="0";
 	[ ! -e "/lib/modules/$(uname -r)/nft_flow_offload.ko" ] && { sw_flow="0"; hw_flow="0"; }
 	[ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] && bbr_cca="0"
 }
@@ -31,8 +31,30 @@ load_sfe() {
 }
 
 unload_sfe() {
-	[ -d /sys/module/shortcut_fe_cm ] && rmmod shortcut_fe_cm 
+	[ -d /sys/module/shortcut_fe_cm ] && rmmod shortcut_fe_cm
 	[ -d /sys/module/fast_classifier ] && rmmod fast_classifier
+}
+
+load_wed() {
+	local kernel_version=$(uname -r)
+
+	grep -Eq 'mediatek' /etc/openwrt_release && \
+	    ! grep -Eq 'mt7915e' /etc/modules.conf && \
+		[ -e "/lib/modules/$kernel_version/mt7915e.ko" ] && {
+			sed -i '$aoptions mt7915e wed_enable=Y' /etc/modules.conf
+			rmmod mt7915e && sleep 1 && modprobe mt7915e && wifi up
+		}
+}
+
+unload_wed() {
+	local kernel_version=$(uname -r)
+
+	grep -Eq 'mediatek' /etc/openwrt_release && \
+	    grep -Eq 'mt7915e' /etc/modules.conf && \
+		[ -e "/lib/modules/$kernel_version/mt7915e.ko" ] && {
+			sed -i '/mt7915e/d' /etc/modules.conf
+			rmmod mt7915e && sleep 1 && modprobe mt7915e && wifi up
+		}
 }
 
 start(){
@@ -43,12 +65,12 @@ start(){
 	uci set firewall.@defaults[0].fullcone="${fullcone_nat}"
 	uci commit firewall
 
-	[ "${sw_flow}" -eq "0" ] && [ "${hw_flow}" -eq "1" ] && {
-		lsmod | grep -q mtkhnat || modprobe mtkhnat
-	}
-
 	[ "${sw_flow}" -ne "1" ] && [ "${sfe_flow}" -eq "1" ] && {
 		load_sfe
+	}
+	
+	[ "${hw_flow}" -eq "1" ] && [ "${hw_wed}" -eq "1" ] && {
+		load_wed
 	}
 
 	if [ "${bbr_cca}" -eq "1" ];  then
@@ -72,8 +94,8 @@ stop(){
 	uci set firewall.@defaults[0].fullcone="${fullcone_nat}"
 	uci commit firewall
 
-	[ "${hw_flow}" -eq "0" ] && {
-		lsmod | grep -q mtkhnat && rmmod mtkhnat
+	[ "${hw_wed}" -eq "0" ] && {
+		unload_wed
 	}
 
 	unload_sfe

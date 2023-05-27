@@ -15,21 +15,22 @@ if nixio.fs.access("/lib/modules/" .. kernel_version .. "/nft_flow_offload.ko") 
 sw_flow = s:option(Flag, "sw_flow", translate("Software flow offloading"))
 sw_flow.default = 0
 sw_flow.description = translate("Software based offloading for routing/NAT")
-if nixio.fs.access("/lib/modules/" .. kernel_version .. "/mtkhnat.ko") then
-sw_flow:depends("hw_flow", 0)
-else
 sw_flow:depends("sfe_flow", 0)
-end
 end
 
 if luci.sys.call("cat /etc/openwrt_release | grep -Eq 'filogic|mt762' ") == 0 then
 hw_flow = s:option(Flag, "hw_flow", translate("Hardware flow offloading"))
 hw_flow.default = 0
-hw_flow.description = translate("Requires hardware NAT support. Implemented at least for mt762x")
-if nixio.fs.access("/lib/modules/" .. kernel_version .. "/mtkhnat.ko") then
-hw_flow:depends("sw_flow", 0)
-else
+hw_flow.description = translate("Requires hardware NAT support, implemented at least for mt762x")
 hw_flow:depends("sw_flow", 1)
+end
+
+if luci.sys.call("cat /etc/openwrt_release | grep -Eq 'mediatek' ") == 0 then
+if nixio.fs.access("/lib/modules/" .. kernel_version .. "/mt7915e.ko") then
+hw_wed = s:option(Flag, "hw_wed", translate("MTK WED WO offloading"))
+hw_wed.default = 0
+hw_wed.description = translate("Requires hardware support, implemented at least for Filogic 8x0")
+hw_wed:depends("hw_flow", 1)
 end
 end
 
