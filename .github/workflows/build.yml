@@ -42,7 +42,18 @@ jobs:
       - name: 将存储库签出到运行器
         uses: actions/checkout@v3
         with:
-          path: ${{ env.OPENWRT_ROOT_PATH }}/package/
+          path: ${{ env.OPENWRT_ROOT_PATH }}/package/chenmozhijin-package
+
+
+      - name: test
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+         ls
+         echo 1
+         ls ${{ env.OPENWRT_ROOT_PATH }}/package/chenmozhijin-package
+         echo 2
+         ls ${{ env.OPENWRT_ROOT_PATH }}/package
+
 
       - name: 更新 feeds 
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
