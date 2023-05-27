@@ -32,7 +32,7 @@ jobs:
       - name: 下载SDK
         run: |
           url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-          wget $url
+          wget -O openwrt.tar.xz $url
           tar xvf openwrt.tar.xz
           mv $(basename $url | awk -F '.tar.xz' '{ print $1 }') openwrt
           cd openwrt
