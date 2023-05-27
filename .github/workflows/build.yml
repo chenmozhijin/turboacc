@@ -67,7 +67,7 @@ jobs:
       - name: 编译
         working-directory:  ${{ env.CMZJ_PACKAGE_ROOT_PATH }}
         run: |
-          make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc
+          make package/turboacc/luci-app-turboacc/compile -j$(nproc) || make package/turboacc/luci-app-turboacc/compile -j1 V=sc
 
       - name: 准备 artifact
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
