@@ -42,10 +42,12 @@ jobs:
         sdk=$(basename $url | awk -F '.tar.xz' '{ print $1 }')
 
         cd $sdk
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
         echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
         make defconfig
         
-        make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc || exit 0
+        make package/luci-app-turboacc/compile -j$(nproc) || make package/luci-app-turboacc/compile -j1 V=sc
 
         # cp file to artifact
         cd ${{ github.workspace }}
