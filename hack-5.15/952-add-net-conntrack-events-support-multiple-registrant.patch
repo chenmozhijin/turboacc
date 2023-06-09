@@ -1,16 +1,8 @@
-From 42824d4b753f84ccf885eca602c5037338b546c8 Mon Sep 17 00:00:00 2001
-From: Zhi Chen <zhichen@codeaurora.org>
-Date: Tue, 13 Jan 2015 14:28:18 -0800
-Subject: [PATCH 3/3] net: conntrack events, support multiple registrant
+From 3ee3529e5a31e6183f3ea7f7624533bd582432fc Mon Sep 17 00:00:00 2001
+From: W_Y_CPP <383152993@qq.com>
+Date: Tue, 18 Jan 2022 21:45:34 -0500
+Subject: [PATCH] add net-conntrack-events-support-multiple-registrant for 5.15
 
-Merging this patch from kernel 3.4:
-This was supported by old (.28) kernel versions but removed
-because of it's overhead.
-But we need this feature for NA connection manager. Both ipv4
-and ipv6 modules needs to register themselves to ct events.
-
-Change-Id: Iebfb254590fb594f5baf232f849d1b7ae45ef757
-Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 ---
  include/net/netfilter/nf_conntrack_ecache.h |  15 ++-
  include/net/netns/conntrack.h               |   3 +
@@ -133,10 +125,20 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  #include <linux/netdevice.h>
  #include <linux/slab.h>
  #include <linux/export.h>
-@@ -167,6 +170,35 @@ static int __nf_conntrack_eventmask_repo
+@@ -129,7 +132,7 @@ static void ecache_work(struct work_stru
+ 	if (delay >= 0)
+ 		schedule_delayed_work(&cnet->ecache_dwork, delay);
+ }
+-
++#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+ static int __nf_conntrack_eventmask_report(struct nf_conntrack_ecache *e,
+ 					   const unsigned int events,
+ 					   const unsigned long missed,
+@@ -166,7 +169,36 @@ static int __nf_conntrack_eventmask_repo
+ 
  	return ret;
  }
- 
++#endif
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +int nf_conntrack_eventmask_report(unsigned int eventmask, struct nf_conn *ct,
 +				  u32 portid, int report)
@@ -162,7 +164,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 +
 +		atomic_notifier_call_chain(&net->ct.nf_conntrack_chain, eventmask | missed, &item);
 +	}
-+
+ 
 +	return 0;
 +}
 +#else
@@ -306,7 +308,23 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	struct nf_conn *ct = item->ct;
  	struct sk_buff *skb;
  	unsigned int type;
-@@ -3769,11 +3776,17 @@ static int ctnetlink_stat_exp_cpu(struct
+@@ -3118,6 +3125,7 @@ nla_put_failure:
+ }
+ 
+ #ifdef CONFIG_NF_CONNTRACK_EVENTS
++#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+ static int
+ ctnetlink_expect_event(unsigned int events, const struct nf_exp_event *item)
+ {
+@@ -3167,6 +3175,7 @@ errout:
+ 	return 0;
+ }
+ #endif
++#endif
+ static int ctnetlink_exp_done(struct netlink_callback *cb)
+ {
+ 	if (cb->args[1])
+@@ -3769,11 +3778,17 @@ static int ctnetlink_stat_exp_cpu(struct
  }
  
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
@@ -324,7 +342,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  
  static const struct nfnl_callback ctnl_cb[IPCTNL_MSG_MAX] = {
  	[IPCTNL_MSG_CT_NEW]	= {
-@@ -3872,8 +3885,12 @@ static int __net_init ctnetlink_net_init
+@@ -3872,8 +3887,12 @@ static int __net_init ctnetlink_net_init
  static void ctnetlink_net_pre_exit(struct net *net)
  {
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
