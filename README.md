@@ -5,7 +5,7 @@
 1.   https://github.com/coolsnowwolf/lede/tree/master/package/lean/shortcut-fe 
 2.   https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
 3.   https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-4.   https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.15/952-net-conntrack-events-support-multiple-registrant.patch
+4.   https://github.com/coolsnowwolf/lede/files/11473486/952-add-net-conntrack-events-support-multiple-registrant.patch / https://github.com/coolsnowwolf/lede/issues/11211
 5.   https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 6.   https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-6.1/952-net-conntrack-events-support-multiple-registrant.patch
 7.   https://github.com/coolsnowwolf/lede/blob/master/target/linux/generic/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
