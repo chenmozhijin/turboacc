@@ -50,7 +50,7 @@ mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
 rm -rf ./turboacc
 cd ../..
 cp turboacc_tmp/turboacc/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.15
- cp turboacc_tmp/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.15
+cp turboacc_tmp/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.15
 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
