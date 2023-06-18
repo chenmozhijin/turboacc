@@ -13,7 +13,7 @@ Shortcut-FE需要：
 [nftables patch](https://github.com/wongsyrone/lede-1/blob/master/package/network/utils/nftables/patches/999-01-nftables-add-fullcone-expression-support.patch)与
 [libnftnl patch](https://github.com/wongsyrone/lede-1/blob/master/package/libs/libnftnl/patches/999-01-libnftnl-add-fullcone-expression-support.patch)或[firewall4修补的存储库](https://github.com/wongsyrone/openwrt-firewall4-with-fullcone)、[nftables修补的存储库](https://github.com/wongsyrone/nftables-1.0.2-with-fullcone)与[libnftnl修补的存储库](https://github.com/wongsyrone/libnftnl-1.2.1-with-fullcone)
 ## 使用方法
-### 22.03(kernel-5.15)
+### 22.03(kernel-5.10)
 +  在openwrt源代码所在目录执行：
 ```
 mkdir -p turboacc_tmp ./package/turboacc
