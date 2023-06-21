@@ -123,7 +123,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	depends on NETFILTER_ADVANCED
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
-@@ -2808,6 +2808,10 @@ int nf_conntrack_init_net(struct net *ne
+@@ -2809,6 +2809,10 @@ int nf_conntrack_init_net(struct net *ne
  	nf_conntrack_ecache_pernet_init(net);
  	nf_conntrack_proto_pernet_init(net);
  
@@ -146,10 +146,20 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  #include <linux/netdevice.h>
  #include <linux/slab.h>
  #include <linux/export.h>
-@@ -162,6 +165,35 @@ static int __nf_conntrack_eventmask_repo
+@@ -123,7 +126,7 @@ static void ecache_work(struct work_stru
+ 	if (delay >= 0)
+ 		schedule_delayed_work(&cnet->ecache.dwork, delay);
+ }
+-
++#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+ static int __nf_conntrack_eventmask_report(struct nf_conntrack_ecache *e,
+ 					   const u32 events,
+ 					   const u32 missed,
+@@ -161,7 +164,36 @@ static int __nf_conntrack_eventmask_repo
+ 
  	return ret;
  }
- 
++#endif 
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +int nf_conntrack_eventmask_report(unsigned int eventmask, struct nf_conn *ct,
 +				  u32 portid, int report)
@@ -175,7 +185,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 +
 +		atomic_notifier_call_chain(&net->ct.nf_conntrack_chain, eventmask | missed, &item);
 +	}
-+
+ 
 +	return 0;
 +}
 +#else
@@ -299,7 +309,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  void nf_conntrack_ecache_work(struct net *net, enum nf_ct_ecache_state state)
 --- a/net/netfilter/nf_conntrack_netlink.c
 +++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -723,12 +723,19 @@ static size_t ctnetlink_nlmsg_size(const
+@@ -718,12 +718,19 @@ static size_t ctnetlink_nlmsg_size(const
  }
  
  static int
@@ -319,7 +329,23 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	struct nf_conn *ct = item->ct;
  	struct sk_buff *skb;
  	unsigned int type;
-@@ -3758,11 +3765,17 @@ static int ctnetlink_stat_exp_cpu(struct
+@@ -3094,6 +3101,7 @@ nla_put_failure:
+ }
+ 
+ #ifdef CONFIG_NF_CONNTRACK_EVENTS
++#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+ static int
+ ctnetlink_expect_event(unsigned int events, const struct nf_exp_event *item)
+ {
+@@ -3143,6 +3151,7 @@ errout:
+ 	return 0;
+ }
+ #endif
++#endif
+ static int ctnetlink_exp_done(struct netlink_callback *cb)
+ {
+ 	if (cb->args[1])
+@@ -3750,11 +3759,17 @@ static int ctnetlink_stat_exp_cpu(struct
  }
  
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
@@ -337,7 +363,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  
  static const struct nfnl_callback ctnl_cb[IPCTNL_MSG_MAX] = {
  	[IPCTNL_MSG_CT_NEW]	= {
-@@ -3861,8 +3874,12 @@ static int __net_init ctnetlink_net_init
+@@ -3853,8 +3868,12 @@ static int __net_init ctnetlink_net_init
  static void ctnetlink_net_pre_exit(struct net *net)
  {
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
