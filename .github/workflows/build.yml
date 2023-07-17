@@ -49,21 +49,6 @@ jobs:
           cd $OPENWRT_ROOT_PATH
           git checkout ${{ matrix.tag_branche }}
 
-      - name: 将存储库luci分支签出到运行器
-        uses: actions/checkout@v3
-        with:
-          ref: luci
-          path: ${{ env.OPENWRT_ROOT_PATH }}/package/
-          sparse-checkout: |
-                luci-app-turboacc
-          sparse-checkout-cone-mode: false
-
-      - name: 将存储库package分支签出到运行器
-        uses: actions/checkout@v3
-        with:
-          ref: package
-          path: package
-
       - name: 修复问题
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
