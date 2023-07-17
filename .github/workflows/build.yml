@@ -167,8 +167,8 @@ jobs:
             echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' >> .config
-          elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM_DRV" ]; then
-            echo "SHORTCUT_FE_CM_DRV"
+          elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_DRV" ]; then
+            echo "SHORTCUT_FE_DRV"
             echo "CONFIG_TARGET_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_ipq807x_generic=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_ipq807x_generic_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
