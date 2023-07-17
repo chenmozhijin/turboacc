@@ -5,79 +5,265 @@ on:
   push:
     branches:
       - luci
+      - package
     paths:
       - '.github/**'
+      - '!README.md'
+  pull_request:
+            branches:
+              - luci
+              - package
+            paths:
+              - '!README.md'
 jobs:
   build:
     runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        tag_branche: [master,openwrt-23.05,openwrt-22.03,v23.05.0-rc2,v22.03.5]
+        sfe: [none,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
     steps:
-      - name: 清理空间
-        run:  |
-          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php
-          sudo -E apt-mark hold grub-efi-amd64-signed
-          sudo -E apt update
-          sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* moby* snap*
-
       - name: 安装编译依赖
         run: |
           sudo -E apt-mark hold grub-efi-amd64-signed
-          sudo -E apt update
           sudo -E apt -y full-upgrade
-          sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils clang g++ python3-distutils rsync unzip zlib1g-dev wget
+          sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint b43-fwcutter binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext \
+          gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev \
+          libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils clang g++ python3-distutils \
+          rsync unzip zlib1g-dev wget || sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint b43-fwcutter binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar \
+          flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev \
+          libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils clang g++ \
+          python3-distutils rsync unzip zlib1g-dev wget
           sudo -E systemctl daemon-reload 
           sudo -E apt -y autoremove --purge
           sudo -E apt clean
           sudo timedatectl set-timezone "Asia/Shanghai"
 
-      - name: 下载SDK
+      - name: 克隆源代码
         run: |
-          url=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-          wget -O openwrt.tar.xz $url
-          tar xvf openwrt.tar.xz
-          mv $(basename $url | awk -F '.tar.xz' '{ print $1 }') openwrt
-          cd openwrt
-          export OPENWRT_ROOT_PATH="$(pwd)"
-          echo "OPENWRT_ROOT_PATH=$OPENWRT_ROOT_PATH" >> $GITHUB_ENV
+            git clone https://git.openwrt.org/openwrt/openwrt.git
+            cd openwrt
+            export OPENWRT_ROOT_PATH="$(pwd)"
+            echo "OPENWRT_ROOT_PATH=$OPENWRT_ROOT_PATH" >> $GITHUB_ENV
 
-      - name: 将存储库签出到运行器
+      - name: 切换标签/分支
+        run: |
+          cd $OPENWRT_ROOT_PATH
+          git checkout ${{ matrix.tag_branche }}
+
+      - name: 将存储库luci分支签出到运行器
         uses: actions/checkout@v3
         with:
-          path: ${{ env.OPENWRT_ROOT_PATH }}/package/chenmozhijin-package
+          ref: luci
+          path: ${{ env.OPENWRT_ROOT_PATH }}/package/
+          sparse-checkout: |
+                luci-app-turboacc
+          sparse-checkout-cone-mode: false
 
-      - name: 更新 feeds 
+      - name: 将存储库package分支签出到运行器
+        uses: actions/checkout@v3
+        with:
+          ref: package
+          path: package
+
+      - name: 修复问题
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-          
+          sed -i 's/^  DEPENDS:= +kmod-crypto-manager +kmod-crypto-pcbc +kmod-crypto-fcrypt$/  DEPENDS:= +kmod-crypto-manager +kmod-crypto-pcbc +kmod-crypto-fcrypt +kmod-udptunnel4 +kmod-udptunnel6/' package/kernel/linux/modules/netsupport.mk #https://github.com/openwrt/openwrt/commit/ecc53240945c95bc77663b79ccae6e2bd046c9c8
+          sed -i 's/^	dnsmasq \\$/	dnsmasq-full \\/g' ./include/target.mk
+          sed -i 's/256/1024/' ./target/linux/${{ needs.prepare.outputs.target }}/image/Makefile
+          sed -i 's/^	b43-fwsquash.py "$(CONFIG_B43_FW_SQUASH_PHYTYPES)" "$(CONFIG_B43_FW_SQUASH_COREREVS)"/	$(TOPDIR)\/tools\/b43-tools\/files\/b43-fwsquash.py "$(CONFIG_B43_FW_SQUASH_PHYTYPES)" "$(CONFIG_B43_FW_SQUASH_COREREVS)"/' ./package/kernel/mac80211/broadcom.mk
 
-      - name: 加载自定义配置并生成配置文件
+      - name: 打内核补丁
+        working-directory: ${{ env.WORKSPACE_ROOT_PATH }}
+        run: |
+          kernel_version="$(sed -n '/CONFIG_LINUX_/p' $OPENWRT_ROOT_PATH/.config | sed -e 's/CONFIG_LINUX_//' -e 's/=y//' -e 's/_/./g')"
+          echo "kernel_version=$kernel_version" >> $GITHUB_ENV
+          echo kernel_version=$kernel_version
+          if [ "$kernel_version" = "5.10" ]; then
+            mkdir -p turboacc_tmp ./package/turboacc
+            cd turboacc_tmp 
+            git clone https://github.com/chenmozhijin/turboacc -b package
+            cd ../package/turboacc
+            git clone https://github.com/fullcone-nat-nftables/nft-fullcone
+            git clone https://github.com/chenmozhijin/turboacc
+            mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
+            rm -rf ./turboacc
+            cd ../..
+            cp turboacc_tmp/turboacc/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.10
+            cp turboacc_tmp/turboacc/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.10
+            rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
+            mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
+            cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
+            cp -RT ./turboacc_tmp/turboacc/firewall4-04a06bd70b9808b14444cae81a2faba4708ee231/firewall4 ./package/network/config/firewall4
+            cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
+            cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
+            rm -rf turboacc_tmp
+            ./scripts/feeds update -a
+            ./scripts/feeds install -a
+          elif  [ "$kernel_version" = "5.15" ]; then
+            mkdir -p turboacc_tmp ./package/turboacc
+            cd turboacc_tmp 
+            git clone https://github.com/chenmozhijin/turboacc -b package
+            cd ../package/turboacc
+            git clone https://github.com/fullcone-nat-nftables/nft-fullcone
+            git clone https://github.com/chenmozhijin/turboacc
+            mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
+            rm -rf ./turboacc
+            cd ../..
+            cp turboacc_tmp/turboacc/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.15
+            cp turboacc_tmp/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.15
+            rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
+            mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
+            cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
+            cp -RT ./turboacc_tmp/turboacc/firewall4-04a06bd70b9808b14444cae81a2faba4708ee231/firewall4 ./package/network/config/firewall4
+            cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
+            cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
+            rm -rf turboacc_tmp
+            ./scripts/feeds update -a
+            ./scripts/feeds install -a
+          else
+            exit 1
+          fi
+          if [ "${{ matrix.sfe }}" = "none" ]; then
+            rm -rf ./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+          fi
+          #log
+          echo "cmzj_patch"
+          ls $CMZJ_PATCH_ROOT_PATH
+          echo "cmzj_package"
+          ls $OPENWRT_ROOT_PATH/package/cmzj_package
+          echo "libnftnl-file"
+          ls $OPENWRT_ROOT_PATH/package/libs/libnftnl
+          echo "firewall4-file"
+          ls $OPENWRT_ROOT_PATH/package/network/config/firewall4
+          echo "nftables-file"
+          ls $OPENWRT_ROOT_PATH/package/network/utils/nftables
+          echo "firewall4-patches"
+          ls $OPENWRT_ROOT_PATH/package/network/config/firewall4/patches/
+          echo "libnftnl-patches"
+          ls $OPENWRT_ROOT_PATH/package/libs/libnftnl/patches/
+          echo "nftables-patches"
+          ls $OPENWRT_ROOT_PATH/package/network/utils/nftables/patches/
+          echo "hack-$kernel_version" 
+          ls $OPENWRT_ROOT_PATH/target/linux/generic/hack-$kernel_version
+
+      - name: 加载配置并生成配置文件
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
+          echo "sfe = "${{ matrix.sfe }}
+          echo 'CONFIG_PACKAGE_luci-app-turboacc=y' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
+          if [ "${{ matrix.sfe }}" = "none" ]; then
           echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
           echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
           echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc=m' > .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
+          elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE" ]; then
+          echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' > .config
+          elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM" ]; then
+          echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' > .config
+          elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM_DRV" ]; then
+          echo "CONFIG_TARGET_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_ipq807x_generic=y" >> $OPENWRT_ROOT_PATH/.config
+          echo "CONFIG_TARGET_ipq807x_generic_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
+          echo "CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_DRV=y" >> $OPENWRT_ROOT_PATH/.config
+          fi
           make defconfig
           ./scripts/diffconfig.sh
 
-      - name: 编译
+      - name: 下载 dl 库
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
-          make package/chenmozhijin-package/luci-app-turboacc/compile -j$(nproc) || make package/chenmozhijin-package/luci-app-turboacc/compile -j1 V=sc
+          make download -j16
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+          make download -j16 || make download -j1 V=s
+
+      - name: 构建工具
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          make tools/install -j $(($(nproc)+1)) || make tools/install -j1 V=s
+          echo "======================="
+          echo "空间使用情况:"
+          echo "======================="
+          df --total  -Th
+          echo "======================="
+  
+      - name: 构建工具链
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          make toolchain/install -j $(($(nproc)+1)) || make toolchain/install -j1 V=s
+          echo "======================="
+          echo "空间使用情况:"
+          echo "======================="
+          df --total  -Th
+          echo "======================="
+
+      - name: 构建内核
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          make target/compile -j $(($(nproc)+1)) || make target/compile -j$(nproc) V=s || make target/compile -j1 V=s
+          echo "======================="
+          echo "空间使用情况:"
+          echo "======================="
+          df --total  -Th
+          echo "======================="
+
+      - name: 编译并生成安装包
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          make package/compile -j $(($(nproc)+1)) || make package/compile -j1 V=s
+          make package/install -j $(($(nproc)+1)) || make package/install -j1 V=s
+          echo "======================="
+          echo "空间使用情况:"
+          echo "======================="
+          df --total  -Th
+          echo "======================="
+          du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
+          du -h --max-depth=1 ./build_dir
+          du -h --max-depth=1 ./bin
 
       - name: 准备 artifact
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
           mkdir -p ./artifact
-          cp -rf $(find ./bin/packages/ -type f -name "luci-app-turboacc*.ipk") ./artifact
+          cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact
 
       - name: 上传build artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: luci-app-turboacc
+          name: packages-${{ matrix.tag_branche }}-${{ matrix.sfe }}
           path: ${{ github.workspace }}/artifact/**
+
+      - name: 收集日志
+        if: success() || failure()
+        run: |
+          mkdir -p logs
+          cd logs
+          export LOG_PATH="$(pwd)"
+          echo "LOG_PATH=$LOG_PATH" >> $GITHUB_ENV
+          cp -r $OPENWRT_ROOT_PATH/logs $LOG_PATH/openwrt-logs || echo "没有openwrt/logs"
+          cp $OPENWRT_ROOT_PATH/.config $LOG_PATH/openwrt.config || echo "没有openwrt/.config"
+          ls -la $(find $OPENWRT_ROOT_PATH/package/ -type d)  >> $LOG_PATH/package_files.list
+          ls -la $(find $OPENWRT_ROOT_PATH/linux/generic/ -type d)  >> $LOG_PATH/kp_files.list
+
+      - name: 上传日志
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logs-${{ matrix.tag_branche }}-${{ matrix.sfe }}
+          path: "${{ env.LOG_PATH }}"
