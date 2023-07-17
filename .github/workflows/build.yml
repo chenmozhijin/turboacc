@@ -27,6 +27,7 @@ jobs:
     steps:
       - name: 安装编译依赖
         run: |
+          sudo -E apt update
           sudo -E apt-mark hold grub-efi-amd64-signed
           sudo -E apt -y full-upgrade
           sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint b43-fwcutter binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext \
