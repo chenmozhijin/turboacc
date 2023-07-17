@@ -66,8 +66,6 @@ jobs:
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
           make defconfig
-
-
           
       - name: 打内核补丁
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
@@ -139,40 +137,51 @@ jobs:
           echo "hack-$kernel_version" 
           ls $OPENWRT_ROOT_PATH/target/linux/generic/hack-$kernel_version
 
-      - name: 加载配置并生成配置文件1
+      - name: 加载配置并生成配置文件
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
           echo "sfe = "${{ matrix.sfe }}
-          rm -rf .config tmp
+          rm -rf .config .config.old tmp
+          ls -la
           echo 'CONFIG_PACKAGE_luci-app-turboacc=y' > .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' > .config
           if [ "${{ matrix.sfe }}" = "none" ]; then
-          echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
+            echo "none"
+            echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' > .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' > .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' > .config
           elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE" ]; then
-          echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' > .config
+            echo "SHORTCUT_FE"
+            echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' > .config
           elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM" ]; then
-          echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' > .config
+            echo "SHORTCUT_FE_CM"
+            echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' > .config
           elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM_DRV" ]; then
-          echo "CONFIG_TARGET_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_ipq807x_generic=y" >> $OPENWRT_ROOT_PATH/.config
-          echo "CONFIG_TARGET_ipq807x_generic_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
-          echo "CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_DRV=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "SHORTCUT_FE_CM_DRV"
+            echo "CONFIG_TARGET_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_ipq807x_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo "CONFIG_TARGET_ipq807x_generic_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' > .config
+            echo "CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_DRV=y" >> $OPENWRT_ROOT_PATH/.config
+          else
+            echo "sfe = "${{ matrix.sfe }}
+            exit 1
           fi
+          echo ".config"
+          cat .config
           make defconfig
+          echo "diffconfig"
           ./scripts/diffconfig.sh
 
       - name: 下载 dl 库
