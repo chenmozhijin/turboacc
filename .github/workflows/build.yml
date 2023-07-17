@@ -143,13 +143,13 @@ jobs:
           echo "sfe = "${{ matrix.sfe }}
           rm -rf .config .config.old tmp
           ls -la
-          echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
-          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
           if [ "${{ matrix.sfe }}" = "none" ]; then
             echo "none"
             echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' >> .config
@@ -158,6 +158,8 @@ jobs:
             echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' >> .config
           elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM" ]; then
@@ -165,6 +167,8 @@ jobs:
             echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' >> .config
           elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_DRV" ]; then
@@ -172,6 +176,8 @@ jobs:
             echo "CONFIG_TARGET_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_ipq807x_generic=y" >> $OPENWRT_ROOT_PATH/.config
             echo "CONFIG_TARGET_ipq807x_generic_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
+            echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
             echo "CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_DRV=y" >> $OPENWRT_ROOT_PATH/.config
           else
