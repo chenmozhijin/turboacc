@@ -153,10 +153,6 @@ jobs:
             rm -rf ./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
           fi
           #log
-          echo "cmzj_patch"
-          ls $CMZJ_PATCH_ROOT_PATH
-          echo "cmzj_package"
-          ls $OPENWRT_ROOT_PATH/package/cmzj_package
           echo "libnftnl-file"
           ls $OPENWRT_ROOT_PATH/package/libs/libnftnl
           echo "firewall4-file"
