@@ -56,6 +56,12 @@ jobs:
           sed -i 's/^	dnsmasq \\$/	dnsmasq-full \\/g' ./include/target.mk
           sed -i 's/^	b43-fwsquash.py "$(CONFIG_B43_FW_SQUASH_PHYTYPES)" "$(CONFIG_B43_FW_SQUASH_COREREVS)"/	$(TOPDIR)\/tools\/b43-tools\/files\/b43-fwsquash.py "$(CONFIG_B43_FW_SQUASH_PHYTYPES)" "$(CONFIG_B43_FW_SQUASH_COREREVS)"/' ./package/kernel/mac80211/broadcom.mk
 
+      - name: 更新 feeds 
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
       - name: 加载配置并生成配置文件
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
@@ -93,7 +99,7 @@ jobs:
 
           
       - name: 打内核补丁
-        working-directory: ${{ env.WORKSPACE_ROOT_PATH }}
+        working-directory: ${{ env.OPENWRT_ROOT_PATH }}
         run: |
           kernel_version="$(sed -n '/CONFIG_LINUX_/p' $OPENWRT_ROOT_PATH/.config | sed -e 's/CONFIG_LINUX_//' -e 's/=y//' -e 's/_/./g')"
           echo "kernel_version=$kernel_version" >> $GITHUB_ENV
