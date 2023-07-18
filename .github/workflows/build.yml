@@ -256,7 +256,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: packages-${{ matrix.tag_branche }}-${{ matrix.sfe }}
-          path: ${{ github.workspace }}/artifact/**
+          path: ${{ env.OPENWRT_ROOT_PATH }}/artifact/**
 
       - name: 收集日志
         if: success() || failure()
