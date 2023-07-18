@@ -169,6 +169,7 @@ jobs:
             echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
             echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' >> .config
+            echo 'CONFIG_PACKAGE_kmod-shortcut-fe-cm=n' >> .config
           elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM" ]; then
             echo "SHORTCUT_FE_CM"
             echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
