@@ -83,8 +83,9 @@ jobs:
             mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
             rm -rf ./turboacc
             cd ../..
-            cp turboacc_tmp/turboacc/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.10
-            cp turboacc_tmp/turboacc/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.10
+            cp -f turboacc_tmp/turboacc/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
+            cp -f turboacc_tmp/turboacc/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+            cp -f turboacc_tmp/turboacc/pending-5.10/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/hack-5.10/613-netfilter_optional_tcp_window_check.patch
             rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
             mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
             cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
@@ -92,6 +93,8 @@ jobs:
             cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
             cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
             rm -rf turboacc_tmp
+            echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.10
+            echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.10
             ./scripts/feeds update -a
             ./scripts/feeds install -a
           elif  [ "$kernel_version" = "5.15" ]; then
@@ -104,8 +107,9 @@ jobs:
             mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
             rm -rf ./turboacc
             cd ../..
-            cp turboacc_tmp/turboacc/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.15
-            cp turboacc_tmp/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.15
+            cp -f turboacc_tmp/turboacc/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-5.15/613-netfilter_optional_tcp_window_check.patch
+            cp -f turboacc_tmp/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+            cp -f turboacc_tmp/pending-5.15/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch
             rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
             mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
             cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
@@ -113,6 +117,8 @@ jobs:
             cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
             cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
             rm -rf turboacc_tmp
+            echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.15
+            echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.15
             ./scripts/feeds update -a
             ./scripts/feeds install -a
           else
@@ -136,6 +142,8 @@ jobs:
           ls $OPENWRT_ROOT_PATH/package/network/utils/nftables/patches/
           echo "hack-$kernel_version" 
           ls $OPENWRT_ROOT_PATH/target/linux/generic/hack-$kernel_version
+          echo "pending-$kernel_version" 
+          ls $OPENWRT_ROOT_PATH/target/linux/generic/pending-$kernel_version
 
       - name: 加载配置并生成配置文件
         working-directory: ${{ env.OPENWRT_ROOT_PATH }}
@@ -145,6 +153,7 @@ jobs:
           ls -la
           echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
           echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
+          echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_NFT_FULLCONE=y' >> .config
           if [ "${{ matrix.sfe }}" = "none" ]; then
             echo "none"
             echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
