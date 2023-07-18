@@ -271,7 +271,7 @@ jobs:
           ls -la $(find $OPENWRT_ROOT_PATH/linux/generic/ -type d)  >> $LOG_PATH/kp_files.list
 
       - name: 上传日志
-        if: failure()
+        if: success() || failure()
         uses: actions/upload-artifact@v3
         with:
           name: logs-${{ matrix.tag_branche }}-${{ matrix.sfe }}
