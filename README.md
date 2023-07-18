@@ -74,7 +74,6 @@ echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.15
 make menuconfig
 ```
 +  在 > LuCI > 3. Applications中选中luci-app-turboacc
-+  如果不需要sfe建议删除 target/linux/generic/hack-x.xx/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 +  如果你想用要一个用GitHub Actions云编译带turboacc官方源码的openwrt可以看看这个仓库[OpenWrt-K](https://github.com/chenmozhijin/OpenWrt-K)
 ## 插件预览
 ![插件预览](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
