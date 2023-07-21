@@ -13,12 +13,14 @@ jobs:
         - name: 设置时区建立工作文件夹
           run: |
             sudo timedatectl set-timezone "Asia/Shanghai"
-            mkdir -p compare compare/original compare/new clone clone/fullcone-nat-nftables/nft-fullcone clone/wongsyrone/lede-1 clone/coolsnowwolf/lede
+            mkdir -p compare compare/original compare/new clone clone/fullcone-nat-nftables/nft-fullcone clone/wongsyrone/lede-1 clone/coolsnowwolf/lede output/test output/push
             export COMPARE_PATH="$(pwd)/compare"
             export CLONE_PATH="$(pwd)/clone"
+            export OUTPUT_PATH="$(pwd)/output"
             echo "COMPARE_PATH=$COMPARE_PATH" >> $GITHUB_ENV
             echo "CLONE_PATH=$CLONE_PATH" >> $GITHUB_ENV
-            mkdir -p $COMPARE_PATH/new/nft-fullcone $COMPARE_PATH/new/hack-5.10 $COMPARE_PATH/new/hack-5.15 $COMPARE_PATH/new/hack-6.1 
+            echo "OUTPUT_PATH=$OUTPUT_PATH" >> $GITHUB_ENV
+            mkdir -p $COMPARE_PATH/new/nft-fullcone $COMPARE_PATH/new/hack-5.10 $COMPARE_PATH/new/hack-5.15 $COMPARE_PATH/new/hack-6.1 $COMPARE_PATH/new/firewall4/patches/ $COMPARE_PATH/new/nftables/patches/ $COMPARE_PATH/new/libnftnl/patches/
             
         - name: 克隆
           run: |
@@ -26,11 +28,14 @@ jobs:
             git clone --depth=1 --single-branch https://github.com/wongsyrone/lede-1 $CLONE_PATH/wongsyrone/lede-1
             git clone --depth=1 --single-branch https://github.com/coolsnowwolf/lede $CLONE_PATH/coolsnowwolf/lede
             git clone --depth=1 --single-branch --branch "package" https://github.com/chenmozhijin/turboacc $CLONE_PATH/chenmozhijin/turboacc
+            git clone --depth=1 --single-branch --branch "master" https://github.com/openwrt/openwrt/ $CLONE_PATH/openwrt/openwrt/
 
         - name: 整理
           run: |
+            #nft-fullcone
             cp -RT $CLONE_PATH/fullcone-nat-nftables/nft-fullcone $COMPARE_PATH/new/nft-fullcone
             cp -RT $CLONE_PATH/chenmozhijin/turboacc/nft-fullcone $COMPARE_PATH/original/nft-fullcone
+            #hack
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/new/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
@@ -40,5 +45,68 @@ jobs:
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-5.10/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-5.10/613-netfilter_optional_tcp_window_check.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-5.15/613-netfilter_optional_tcp_window_check.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-6.1/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-6.1/613-netfilter_optional_tcp_window_check.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/original/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/original/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/original/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/original/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/original/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/original/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+            #pending
+            cp $CLONE_PATH/chenmozhijin/turboacc/pending-5.10/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-5.10/613-netfilter_optional_tcp_window_check.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/pending-5.15/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-5.15/613-netfilter_optional_tcp_window_check.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/pending-6.1/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-6.1/613-netfilter_optional_tcp_window_check.patch
+            #shortcut-fe
             cp -RT $CLONE_PATH/coolsnowwolf/lede/package/lean/shortcut-fe $COMPARE_PATH/new/shortcut-fe
             cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe $COMPARE_PATH/original/shortcut-fe
+            #firewall4 nftables libnftnl
+            cp -RT $CLONE_PATH/openwrt/openwrt/package/network/config/firewall4/ $COMPARE_PATH/new/firewall4/
+            cp -RT $CLONE_PATH/openwrt/openwrt/package/network/utils/nftables/ $COMPARE_PATH/new/nftables/
+            cp -RT $CLONE_PATH/openwrt/openwrt/package/libs/libnftnl/ $COMPARE_PATH/new/libnftnl/
+            cp -RT $CLONE_PATH/wongsyrone/lede-1/package/network/config/firewall4/patches/ $COMPARE_PATH/new/firewall4/patches/
+            cp -RT $CLONE_PATH/wongsyrone/lede-1/package/network/utils/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
+            cp -RT $CLONE_PATH/wongsyrone/lede-1/package/libs/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
+            FIREWALL4_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/firewall4/Makefile | cut -d '=' -f 2)
+            NFTABLES_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/nftables/Makefile | cut -d '=' -f 2)
+            LIBNFTNL_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/libnftnl/Makefile | cut -d '=' -f 2)
+            mkdir -p $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4 $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables
+            cp -RT $COMPARE_PATH/new/firewall4/ $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4
+            cp -RT $COMPARE_PATH/new/nftables/ $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables
+            cp -RT $COMPARE_PATH/new/libnftnl/ $COMPARE_PATH/new/libnftnl-$LIBNFTNL_NEW_VERSION/libnftnl
+            rm -rf $COMPARE_PATH/new/firewall4/ $COMPARE_PATH/new/nftables/ $COMPARE_PATH/new/libnftnl/
+            if [ -d "$CLONE_PATH/chenmozhijin/turboacc/firewall4-$FIREWALL4_NEW_VERSION" ]; then
+                cp -RT $CLONE_PATH/chenmozhijin/turboacc/firewall4-$FIREWALL4_NEW_VERSION $COMPARE_PATH/original/firewall4-$FIREWALL4_NEW_VERSION
+                cp -r $CLONE_PATH/chenmozhijin/turboacc/firewall4-* $OUTPUT_PATH/push/
+                rm -rf $OUTPUT_PATH/push/firewall4-$FIREWALL4_NEW_VERSION
+            else
+                echo "firewall4有新版本$FIREWALL4_NEW_VERSION"
+                mkdir -p  $COMPARE_PATH/original/firewall4-$FIREWALL4_NEW_VERSION
+                cp -r $CLONE_PATH/chenmozhijin/turboacc/firewall4-* $OUTPUT_PATH/push/
+            fi
+            if [ -d "$CLONE_PATH/chenmozhijin/turboacc/nftables-$NFTABLES_NEW_VERSION" ]; then
+                cp -RT $CLONE_PATH/chenmozhijin/turboacc/nftables-$NFTABLES_NEW_VERSION $COMPARE_PATH/original/nftables-$NFTABLES_NEW_VERSION
+                cp -r $CLONE_PATH/chenmozhijin/turboacc/nftables-* $OUTPUT_PATH/push/
+                rm -rf $OUTPUT_PATH/push/nftables-$NFTABLES_NEW_VERSION
+            else
+                echo "nftables有新版本$NFTABLES_NEW_VERSION"
+                mkdir -p  $COMPARE_PATH/original/nftables-$NFTABLES_NEW_VERSION
+                cp -r $CLONE_PATH/chenmozhijin/turboacc/nftables-* $OUTPUT_PATH/push/
+            fi
+            if [ -d "$CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_NEW_VERSION" ]; then
+                cp -RT $CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_NEW_VERSION $COMPARE_PATH/original/libnftnl-$LIBNFTNL_NEW_VERSION
+                cp -r $CLONE_PATH/chenmozhijin/turboacc/libnftnl-* $OUTPUT_PATH/push/
+                rm -rf $OUTPUT_PATH/push/libnftnl-$LIBNFTNL_NEW_VERSION
+            else
+                echo "libnftnl有新版本$LIBNFTNL_NEW_VERSION"
+                mkdir -p  $COMPARE_PATH/original/libnftnl-$LIBNFTNL_NEW_VERSION
+                cp -r $CLONE_PATH/chenmozhijin/turboacc/libnftnl-* $OUTPUT_PATH/push/
+            fi
+            cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/test/
+            cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/push/
+
+        - name: 整理
+          run: |
+            if diff -r "$COMPARE_PATH/original/" "$COMPARE_PATH/new/"; then
+                echo "The contents of $COMPARE_PATH/original/ and $COMPARE_PATH/new/ are the same."
+            else
+                echo "The contents of $COMPARE_PATH/original/ and $COMPARE_PATH/new/ are different."
+            fi
