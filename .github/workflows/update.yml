@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
         inputs:
             test:
-              description: 'compile'
+              description: 'test'
               required: false
               type: boolean
 permissions:
