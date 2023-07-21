@@ -112,6 +112,7 @@ jobs:
             fi
             cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/test/
             cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/push/
+            ls -la $(find $$GITHUB_WORKSPACE -type d)
 
         - name: 对比
           run: |
