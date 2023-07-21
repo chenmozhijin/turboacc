@@ -106,7 +106,7 @@ jobs:
             cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/test/
             cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/push/
 
-        - name: 整理
+        - name: 对比
           run: |
             if diff -r "$COMPARE_PATH/original/" "$COMPARE_PATH/new/"; then
                 echo "The contents of $COMPARE_PATH/original/ and $COMPARE_PATH/new/ are the same."
