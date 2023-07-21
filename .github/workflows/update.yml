@@ -14,7 +14,7 @@ permissions:
 jobs:
     check:
         outputs:
-            tset: ${{ steps.diff.outputs.tset }}
+            test: ${{ steps.diff.outputs.tset }}
         runs-on: ubuntu-20.04
         steps:
         - name: 设置时区建立工作文件夹
@@ -154,7 +154,7 @@ jobs:
 
     test: 
         needs: check
-        if:  needs.check.outputs.test == 'true' ||  inputs.compile
+        if:  needs.check.outputs.test == 'true' ||  inputs.test
         runs-on: ubuntu-22.04
         steps:
           - name: 下载test
