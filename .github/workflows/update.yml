@@ -166,10 +166,14 @@ jobs:
         if:  needs.check.outputs.test == 'true' ||  inputs.test
         strategy:
             fail-fast: false
-            max-parallel: 8
+            max-parallel: 10
             matrix:
-              tag_branche: [master,openwrt-23.05,openwrt-22.03,v23.05.0-rc2,v22.03.5]
-              sfe: [none,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
+              tag_branche: [master-6.1,master-5.15,openwrt-23.05,openwrt-22.03,v23.05.0-rc2,v22.03.5]
+              compile: [FLOW_OFFLOAD,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
+              exclude:
+                - tag_branche: master-5.15
+                - compile: SHORTCUT_FE_DRV
+                #master分支没有可用支持SHORTCUT_FE_DRV的5.15内核架构
         runs-on: ubuntu-22.04
         steps:
           - name: 下载test
@@ -208,8 +212,14 @@ jobs:
     
           - name: 切换标签/分支
             run: |
+              if [ "${{ matrix.tag_branche }}" = "master-6.1" ] || [ "${{ matrix.tag_branche }}" = "master-5.15" ]; then
+                tag_branche=master
+              else
+                tag_branche=${{ matrix.tag_branche }}
+              fi
+              echo "$tag_branche"
               cd $OPENWRT_ROOT_PATH
-              git checkout ${{ matrix.tag_branche }}
+              git checkout $tag_branche
     
           - name: 修复问题
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
@@ -227,6 +237,15 @@ jobs:
           - name: 生成配置文件
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
+              if [ "${{ matrix.tag_branche }}" = "master-6.1" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
+                echo "CONFIG_TARGET_ipq806x=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_ipq806x_generic=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_ipq806x_generic_DEVICE_arris_tr4400-v2=y" >> $OPENWRT_ROOT_PATH/.config
+              else
+                echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+              fi
               make defconfig
               
           - name: 添加turboacc
@@ -285,10 +304,36 @@ jobs:
                 echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.15
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
+              elif  [ "$kernel_version" = "6.1" ]; then
+                mkdir -p turboacc_tmp ./package/turboacc
+                cd turboacc_tmp 
+                #git clone https://github.com/chenmozhijin/turboacc -b package
+                cd ../package/turboacc
+                cp -RT $TURBOACC_PATH/nft-fullcone ./nft-fullcone
+                #git clone https://github.com/fullcone-nat-nftables/nft-fullcone
+                git clone https://github.com/chenmozhijin/turboacc
+                mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
+                rm -rf ./turboacc
+                cd ../..
+                cp -f $TURBOACC_PATH/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-6.1/613-netfilter_optional_tcp_window_check.patch
+                cp -f $TURBOACC_PATH/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
+                cp -f $TURBOACC_PATH/pending-6.1/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/pending-6.1/613-netfilter_optional_tcp_window_check.patch
+                rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
+                mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
+                cp -r $TURBOACC_PATH/shortcut-fe ./package/turboacc
+                cp -RT $TURBOACC_PATH/firewall4-*/firewall4 ./package/network/config/firewall4
+                cp -RT $TURBOACC_PATH/libnftnl-*/libnftnl ./package/libs/libnftnl
+                cp -RT $TURBOACC_PATH/nftables-*/nftables ./package/network/utils/nftables
+                rm -rf turboacc_tmp
+                echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-6.1
+                echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-6.1
+                ./scripts/feeds update -a
+                ./scripts/feeds install -a
               else
+                echo "不支持的内核版本：$kernel_version"
                 exit 1
               fi
-              if [ "${{ matrix.sfe }}" = "none" ]; then
+              if [ "${{ matrix.compile }}" = "FLOW_OFFLOAD" ]; then
                 rm -rf ./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
               fi
               #log
@@ -312,44 +357,41 @@ jobs:
           - name: 加载配置并生成配置文件
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
-              echo "sfe = "${{ matrix.sfe }}
+              echo "compile = "${{ matrix.compile }}
               rm -rf .config .config.old tmp
               ls -la
-              echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
-              echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
-              echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_NFT_FULLCONE=y' >> .config
-              if [ "${{ matrix.sfe }}" = "none" ]; then
-                echo "none"
-                echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' >> .config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' >> .config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' >> .config
-              elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE" ]; then
-                echo "SHORTCUT_FE"
-                echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' >> .config
-                echo 'CONFIG_PACKAGE_kmod-shortcut-fe-cm=n' >> .config
-              elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_CM" ]; then
-                echo "SHORTCUT_FE_CM"
-                echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
-                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' >> .config
-              elif [ "${{ matrix.sfe }}" = "SHORTCUT_FE_DRV" ]; then
-                echo "SHORTCUT_FE_DRV"
+              if [ "${{ matrix.tag_branche }}" = "master-6.1" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
                 echo "CONFIG_TARGET_ipq806x=y" >> $OPENWRT_ROOT_PATH/.config
                 echo "CONFIG_TARGET_ipq806x_generic=y" >> $OPENWRT_ROOT_PATH/.config
                 echo "CONFIG_TARGET_ipq806x_generic_DEVICE_arris_tr4400-v2=y" >> $OPENWRT_ROOT_PATH/.config
+              else
+                echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_x86_64_DEVICE_generic=y" >> $OPENWRT_ROOT_PATH/.config
+              fi
+              echo 'CONFIG_PACKAGE_luci-app-turboacc=y' >> .config
+              echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_BBR_CCA=y' >> .config
+              echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_NFT_FULLCONE=y' >> .config
+              if [ "${{ matrix.compile }}" = "FLOW_OFFLOAD" ]; then
+                echo "FLOW_OFFLOAD"
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=y' >> .config
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=n' >> .config
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=n' >> .config
+              elif [ "${{ matrix.compile }}" = "SHORTCUT_FE" ]; then
+                echo "SHORTCUT_FE"
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y' >> .config
+                echo 'CONFIG_PACKAGE_kmod-shortcut-fe-cm=n' >> .config
+              elif [ "${{ matrix.compile }}" = "SHORTCUT_FE_CM" ]; then
+                echo "SHORTCUT_FE_CM"
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
+                echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_CM=y' >> .config
+              elif [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
+                echo "SHORTCUT_FE_DRV"
                 echo 'CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_OFFLOADING=n' >> .config
                 echo "CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE_DRV=y" >> $OPENWRT_ROOT_PATH/.config
               else
-                echo "sfe = "${{ matrix.sfe }}
+                echo "compile = "${{ matrix.compile }}
                 exit 1
               fi
               echo ".config"
@@ -439,7 +481,7 @@ jobs:
           - name: 上传build artifacts
             uses: actions/upload-artifact@v2
             with:
-              name: packages-${{ matrix.tag_branche }}-${{ matrix.sfe }}
+              name: packages-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: ${{ env.OPENWRT_ROOT_PATH }}/artifact/**
     
           - name: 收集日志
@@ -458,7 +500,7 @@ jobs:
             if: success() || failure()
             uses: actions/upload-artifact@v3
             with:
-              name: logs-${{ matrix.tag_branche }}-${{ matrix.sfe }}
+              name: logs-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: "${{ env.LOG_PATH }}"
 
     push: 
