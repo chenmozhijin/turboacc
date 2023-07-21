@@ -71,7 +71,7 @@ jobs:
             FIREWALL4_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/firewall4/Makefile | cut -d '=' -f 2)
             NFTABLES_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/nftables/Makefile | cut -d '=' -f 2)
             LIBNFTNL_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/libnftnl/Makefile | cut -d '=' -f 2)
-            mkdir -p $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4 $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables
+            mkdir -p $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4 $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables $COMPARE_PATH/new/libnftnl-$LIBNFTNL_NEW_VERSION/libnftnl
             cp -RT $COMPARE_PATH/new/firewall4/ $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4
             cp -RT $COMPARE_PATH/new/nftables/ $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables
             cp -RT $COMPARE_PATH/new/libnftnl/ $COMPARE_PATH/new/libnftnl-$LIBNFTNL_NEW_VERSION/libnftnl
