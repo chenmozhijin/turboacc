@@ -3,11 +3,18 @@ on:
 #    schedule:
 #        - cron: '0 4 * * *'
     workflow_dispatch:
+        inputs:
+            test:
+              description: 'compile'
+              required: false
+              type: boolean
 permissions:
     contents: write
     discussions: write
 jobs:
     check:
+        outputs:
+            tset: ${{ steps.diff.outputs.tset }}
         runs-on: ubuntu-20.04
         steps:
         - name: 设置时区建立工作文件夹
@@ -115,9 +122,52 @@ jobs:
             ls -la $(find $GITHUB_WORKSPACE -type d)
 
         - name: 对比
+          id: diff
           run: |
             if diff -r "$COMPARE_PATH/original/" "$COMPARE_PATH/new/"; then
                 echo "The contents of $COMPARE_PATH/original/ and $COMPARE_PATH/new/ are the same."
+                echo "test=false" >> "$GITHUB_OUTPUT"
             else
                 echo "The contents of $COMPARE_PATH/original/ and $COMPARE_PATH/new/ are different."
+                echo "test=true" >> "$GITHUB_OUTPUT"
             fi
+
+        - name: 准备上传
+          run: |
+            cd $OUTPUT_PATH/test/
+            tar cvpzf $GITHUB_WORKSPACE/test.tgz *
+            cd $OUTPUT_PATH/push/
+            tar cvpzf $GITHUB_WORKSPACE/push.tgz *
+            
+        - name: 上传 cmzj_package
+          uses: actions/upload-artifact@v3
+          with:
+            name: test
+            path: test.tgz
+
+        - name: 上传 cmzj_patch
+          uses: actions/upload-artifact@v3
+          with:
+            name: push
+            path: push.tgz
+
+
+    test: 
+        needs: check
+        if:  needs.check.outputs.test == 'true' ||  inputs.compile
+        runs-on: ubuntu-22.04
+        steps:
+          - name: 下载test
+            uses: actions/download-artifact@v3
+            with:
+                name: test
+
+          - name: 解压
+            run: |
+                mkdir -p turboacc
+                export TURBOACC_PATH="$(pwd)/turboacc"
+                echo "TURBOACC_PATH=$TURBOACC_PATH" >> $GITHUB_ENV
+                tar xvpfz $GITHUB_WORKSPACE/test.tgz -C $TURBOACC_PATH
+
+          - name: 检测
+            run: ls -la $(find $GITHUB_WORKSPACE -type d)
