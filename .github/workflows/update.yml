@@ -231,7 +231,7 @@ jobs:
                 cd turboacc_tmp 
                 #git clone https://github.com/chenmozhijin/turboacc -b package
                 cd ../package/turboacc
-                cp -RT ./$TURBOACC_PATH/nft-fullcone ./nft-fullcone
+                cp -RT $TURBOACC_PATH/nft-fullcone ./nft-fullcone
                 #git clone https://github.com/fullcone-nat-nftables/nft-fullcone
                 git clone https://github.com/chenmozhijin/turboacc
                 mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
@@ -242,10 +242,10 @@ jobs:
                 cp -f $TURBOACC_PATH/pending-5.10/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/hack-5.10/613-netfilter_optional_tcp_window_check.patch
                 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
                 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
-                cp -r ./$TURBOACC_PATH/shortcut-fe ./package/turboacc
-                cp -RT ./$TURBOACC_PATH/firewall4-*/firewall4 ./package/network/config/firewall4
-                cp -RT ./$TURBOACC_PATH/libnftnl-*/libnftnl ./package/libs/libnftnl
-                cp -RT ./$TURBOACC_PATH/nftables-*/nftables ./package/network/utils/nftables
+                cp -r $TURBOACC_PATH/shortcut-fe ./package/turboacc
+                cp -RT $TURBOACC_PATH/firewall4-*/firewall4 ./package/network/config/firewall4
+                cp -RT $TURBOACC_PATH/libnftnl-*/libnftnl ./package/libs/libnftnl
+                cp -RT $TURBOACC_PATH/nftables-*/nftables ./package/network/utils/nftables
                 rm -rf turboacc_tmp
                 echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.10
                 echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.10
@@ -256,7 +256,7 @@ jobs:
                 cd turboacc_tmp 
                 #git clone https://github.com/chenmozhijin/turboacc -b package
                 cd ../package/turboacc
-                cp -RT ./$TURBOACC_PATH/nft-fullcone ./nft-fullcone
+                cp -RT $TURBOACC_PATH/nft-fullcone ./nft-fullcone
                 #git clone https://github.com/fullcone-nat-nftables/nft-fullcone
                 git clone https://github.com/chenmozhijin/turboacc
                 mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
@@ -267,10 +267,10 @@ jobs:
                 cp -f $TURBOACC_PATH/pending-5.15/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch
                 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
                 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
-                cp -r ./$TURBOACC_PATH/shortcut-fe ./package/turboacc
-                cp -RT ./$TURBOACC_PATH/firewall4-*/firewall4 ./package/network/config/firewall4
-                cp -RT ./$TURBOACC_PATH/libnftnl-*/libnftnl ./package/libs/libnftnl
-                cp -RT ./$TURBOACC_PATH/nftables-*/nftables ./package/network/utils/nftables
+                cp -r $TURBOACC_PATH/shortcut-fe ./package/turboacc
+                cp -RT $TURBOACC_PATH/firewall4-*/firewall4 ./package/network/config/firewall4
+                cp -RT $TURBOACC_PATH/libnftnl-*/libnftnl ./package/libs/libnftnl
+                cp -RT $TURBOACC_PATH/nftables-*/nftables ./package/network/utils/nftables
                 rm -rf turboacc_tmp
                 echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.15
                 echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.15
