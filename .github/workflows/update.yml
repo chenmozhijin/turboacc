@@ -49,9 +49,13 @@ jobs:
             #hack
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-5.10/952-net-conntrack-events-support-multiple-registrant.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/new/hack-5.10/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-            cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
+            #cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-5.15/952-add-net-conntrack-events-support-multiple-registrant.patch
+            # coolsnowwolf/lede#11211
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/new/hack-5.15/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-            cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch
+            #cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-6.1/952-add-net-conntrack-events-support-multiple-registrant.patch
+            # coolsnowwolf/lede#11211
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/new/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-5.10/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-5.10/613-netfilter_optional_tcp_window_check.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-5.15/613-netfilter_optional_tcp_window_check.patch
@@ -107,6 +111,11 @@ jobs:
                 echo "nftables有新版本$NFTABLES_NEW_VERSION"
                 mkdir -p  $COMPARE_PATH/original/nftables-$NFTABLES_NEW_VERSION
                 cp -r $CLONE_PATH/chenmozhijin/turboacc/nftables-* $OUTPUT_PATH/push/
+            fi
+            #修复WARNING: 'automake-1.16' is probably too old.
+            if [ "$(grep -c "# Network$" $COMPARE_PATH/new/libnftnl-$LIBNFTNL_NEW_VERSION/libnftnl/Makefile)" -eq '0' ];then
+                echo "添加PKG_FIXUP:=autoreconf"
+                sed -i '/PKG_LICENSE_FILES:=COPYING/a\PKG_FIXUP:=autoreconf' $COMPARE_PATH/new/libnftnl-$LIBNFTNL_NEW_VERSION/libnftnl/Makefile
             fi
             if [ -d "$CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_NEW_VERSION" ]; then
                 cp -RT $CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_NEW_VERSION $COMPARE_PATH/original/libnftnl-$LIBNFTNL_NEW_VERSION
@@ -480,10 +489,10 @@ jobs:
                 rm -rf upload/*
                 cp -RT $TURBOACC_PATH upload
                 cd upload
-                #git config user.name "github-actions[bot]"
-                #git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                #git add .
-                #git commit -m "update$(TZ='Asia/Shanghai' date +@%Y%m%d)"
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                git add .
+                git commit -m "update$(TZ='Asia/Shanghai' date +@%Y%m%d)"
                 #git push 
 
           - name: 检测
