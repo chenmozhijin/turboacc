@@ -14,7 +14,7 @@ permissions:
 jobs:
     check:
         outputs:
-            test: ${{ steps.diff.outputs.tset }}
+            test: ${{ steps.diff.outputs.test }}
         runs-on: ubuntu-20.04
         steps:
         - name: 设置时区建立工作文件夹
