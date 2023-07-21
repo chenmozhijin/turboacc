@@ -172,7 +172,7 @@ jobs:
               compile: [FLOW_OFFLOAD,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
               exclude:
                 - tag_branche: master-5.15
-                - compile: SHORTCUT_FE_DRV
+                  compile: SHORTCUT_FE_DRV
                 #master分支没有可用支持SHORTCUT_FE_DRV的5.15内核架构
         runs-on: ubuntu-22.04
         steps:
