@@ -466,7 +466,8 @@ jobs:
               path: "${{ env.LOG_PATH }}"
 
     push: 
-        needs: test
+        needs: [test,check]
+        if: ! inputs.test
         runs-on: ubuntu-22.04
         steps:
           - name: 将存储库签出到运行器
