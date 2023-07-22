@@ -69,7 +69,7 @@ jobs:
             #pending
             cp $CLONE_PATH/chenmozhijin/turboacc/pending-5.10/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-5.10/613-netfilter_optional_tcp_window_check.patch
             cp $CLONE_PATH/chenmozhijin/turboacc/pending-5.15/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-5.15/613-netfilter_optional_tcp_window_check.patch
-            cp $CLONE_PATH/chenmozhijin/turboacc/pending-6.1/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-6.1/613-netfilter_optional_tcp_window_check.patch || true
+            cp $CLONE_PATH/chenmozhijin/turboacc/pending-6.1/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-6.1/613-netfilter_optional_tcp_window_check.patch
             #shortcut-fe
             cp -RT $CLONE_PATH/coolsnowwolf/lede/package/lean/shortcut-fe $COMPARE_PATH/new/shortcut-fe
             cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe $COMPARE_PATH/original/shortcut-fe
@@ -127,6 +127,7 @@ jobs:
                 cp -r $CLONE_PATH/chenmozhijin/turboacc/libnftnl-* $OUTPUT_PATH/push/
             fi
             cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/test/
+            cp $COMPARE_PATH/original/README.md $OUTPUT_PATH/push/README.md
             cp -RT $COMPARE_PATH/new/ $OUTPUT_PATH/push/
             ls -la $(find $GITHUB_WORKSPACE -type d)
 
