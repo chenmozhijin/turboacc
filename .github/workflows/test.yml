@@ -136,9 +136,9 @@ jobs:
                 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
                 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
                 cp -r $TURBOACC_PATH/shortcut-fe ./package/turboacc
-                cp -RT $TURBOACC_PATH/$(ls -tr $DOWNLOAD_ROOT_PATH/turboacc/turboacc/ | grep "firewall4-" |sed -n "1p")/firewall4 ./package/network/config/firewall4
-                cp -RT $TURBOACC_PATH/$(ls -tr $DOWNLOAD_ROOT_PATH/turboacc/turboacc/ | grep "libnftnl-" |sed -n "1p")/libnftnl ./package/libs/libnftnl
-                cp -RT $TURBOACC_PATH/$(ls -tr $DOWNLOAD_ROOT_PATH/turboacc/turboacc/ | grep "nftables-" |sed -n "1p")/nftables ./package/network/utils/nftables
+                cp -RT $TURBOACC_PATH/$(ls -tr $TURBOACC_PATH | grep "firewall4-" |sed -n "1p")/firewall4 ./package/network/config/firewall4
+                cp -RT $TURBOACC_PATH/$(ls -tr $TURBOACC_PATH | grep "libnftnl-" |sed -n "1p")/libnftnl ./package/libs/libnftnl
+                cp -RT $TURBOACC_PATH/$(ls -tr $TURBOACC_PATH | grep "nftables-" |sed -n "1p")/nftables ./package/network/utils/nftables
                 rm -rf turboacc_tmp
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
