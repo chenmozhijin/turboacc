@@ -30,7 +30,7 @@ define KernelPackage/shortcut-fe-drv
   SECTION:=kernel
   CATEGORY:=Kernel modules
   SUBMENU:=Network Support
-  DEPENDS:=@TARGET_ipq806x||TARGET_ipq807x +kmod-shortcut-fe
+  DEPENDS:=@TARGET_ipq806x||TARGET_ipq807xx||TARGET_qualcommax +kmod-shortcut-fe
   KCONFIG:= \
 	   CONFIG_NET_CLS_ACT=y \
 	   CONFIG_XFRM=y
