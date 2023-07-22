@@ -38,8 +38,8 @@ rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/netw
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
 cp -RT ./turboacc_tmp/turboacc/firewall4-04a06bd70b9808b14444cae81a2faba4708ee231/firewall4 ./package/network/config/firewall4
-cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
-cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
+cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.6/libnftnl ./package/libs/libnftnl
+cp -RT ./turboacc_tmp/turboacc/nftables-1.0.8/nftables ./package/network/utils/nftables
 rm -rf turboacc_tmp
 echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.10
 echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.10
@@ -68,8 +68,8 @@ rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/netw
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
 cp -RT ./turboacc_tmp/turboacc/firewall4-04a06bd70b9808b14444cae81a2faba4708ee231/firewall4 ./package/network/config/firewall4
-cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
-cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
+cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.6/libnftnl ./package/libs/libnftnl
+cp -RT ./turboacc_tmp/turboacc/nftables-1.0.8/nftables ./package/network/utils/nftables
 rm -rf turboacc_tmp
 echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.15
 echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.15
@@ -98,8 +98,8 @@ rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/netw
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
 cp -RT ./turboacc_tmp/turboacc/firewall4-04a06bd70b9808b14444cae81a2faba4708ee231/firewall4 ./package/network/config/firewall4
-cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.5/libnftnl ./package/libs/libnftnl
-cp -RT ./turboacc_tmp/turboacc/nftables-1.0.7/nftables ./package/network/utils/nftables
+cp -RT ./turboacc_tmp/turboacc/libnftnl-1.2.6/libnftnl ./package/libs/libnftnl
+cp -RT ./turboacc_tmp/turboacc/nftables-1.0.8/nftables ./package/network/utils/nftables
 rm -rf turboacc_tmp
 echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-6.1
 echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-6.1
