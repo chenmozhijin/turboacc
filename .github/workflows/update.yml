@@ -73,6 +73,7 @@ jobs:
             #shortcut-fe
             cp -RT $CLONE_PATH/coolsnowwolf/lede/package/lean/shortcut-fe $COMPARE_PATH/new/shortcut-fe
             cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe $COMPARE_PATH/original/shortcut-fe
+            sed -i "s#DEPENDS:=@TARGET_ipq806x||TARGET_ipq807x +kmod-shortcut-fe#DEPENDS:=@TARGET_ipq806x||TARGET_ipq807x||TARGET_qualcommax +kmod-shortcut-fe#g" $COMPARE_PATH/new/shortcut-fe/simulated-driver/Makefile
             #firewall4 nftables libnftnl
             cp -RT $CLONE_PATH/openwrt/openwrt/package/network/config/firewall4/ $COMPARE_PATH/new/firewall4/
             cp -RT $CLONE_PATH/openwrt/openwrt/package/network/utils/nftables/ $COMPARE_PATH/new/nftables/
