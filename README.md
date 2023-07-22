@@ -107,7 +107,7 @@ echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-6.1
 ./scripts/feeds install -a
 ```
 
-+ 注意：master分支的部分架构已将6.1内核设为默认内核，请检测你编译的架构默的认版本内核。
++ 注意：master分支的部分架构已将6.1内核设为默认内核，请检测你编译架构的默认内核版本。
 + 这将会下载luci-app-turboacc、nft-fullcone替换firewall4、libnftnl、nftables并打上952、953补丁。
 + 之后执行
 
