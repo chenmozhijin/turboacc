@@ -1,7 +1,7 @@
 name: Update luci-app-turboacc dependencies
 on:
-#    schedule:
-#        - cron: '0 4 * * *'
+    schedule:
+       - cron: '0 23 * * *'
     workflow_dispatch:
         inputs:
             test:
@@ -535,7 +535,7 @@ jobs:
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                 git add .
                 git commit -m "update$(TZ='Asia/Shanghai' date +@%Y%m%d)"
-                #git push 
+                git push 
 
           - name: 检测
             run: ls -la $(find $GITHUB_WORKSPACE -type d)
