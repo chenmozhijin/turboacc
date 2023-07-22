@@ -137,8 +137,8 @@ jobs:
                 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
                 cp -r $TURBOACC_PATH/shortcut-fe ./package/turboacc
                 cp -RT $TURBOACC_PATH/$(grep -o 'FIREWALL4_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/firewall4 ./package/network/config/firewall4
-                cp -RT $TURBOACC_PATH/$(grep -o 'NFTABLES_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
-                cp -RT $TURBOACC_PATH/$(grep -o 'LIBNFTN_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/nftables ./package/network/utils/nftables
+                cp -RT $TURBOACC_PATH/$(grep -o 'LIBNFTN_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
+                cp -RT $TURBOACC_PATH/$(grep -o 'NFTABLES_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/nftables ./package/network/utils/nftables
                 rm -rf turboacc_tmp
                 ./scripts/feeds update -a
                 ./scripts/feeds install -a
