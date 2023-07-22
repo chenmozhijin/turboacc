@@ -34,7 +34,7 @@ LUCI_PKGARCH:=all
 define Package/$(PKG_NAME)/config
 config PACKAGE_$(PKG_NAME)_INCLUDE_OFFLOADING
 	bool "Include Flow Offload"
-	default y if !(TARGET_x86||TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x)
+	default y if !(TARGET_x86||TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x||TARGET_qualcommax)
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE
 	bool "Include Shortcut-FE"
@@ -45,14 +45,14 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE_CM
 	bool "Include Shortcut-FE CM"
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_OFFLOADING=n
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE=n
-	default y if !(TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x)
+	default y if !(TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x||TARGET_qualcommax)
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE_DRV
 	bool "Include Shortcut-FE ECM"
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_OFFLOADING=n
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE=n
 	depends on PACKAGE_$(PKG_NAME)_INCLUDE_SHORTCUT_FE_CM=n
-	depends on (TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x)
+	depends on (TARGET_ipq60xx||TARGET_ipq806x||TARGET_ipq807x||TARGET_qualcommax)
 	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_BBR_CCA
