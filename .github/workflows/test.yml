@@ -1,4 +1,4 @@
-name: Build luci-app-turboacc
+name: Test luci-app-turboacc
 on:
   workflow_dispatch:
   pull_request:
