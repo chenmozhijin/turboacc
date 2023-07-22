@@ -267,7 +267,7 @@ jobs:
                 cd ../..
                 if  [ "$kernel_version" = "6.1" ] || [ "$kernel_version" = "5.15" ]; then
                   cp -f $TURBOACC_PATH/hack-$kernel_version/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-$kernel_version/952-add-net-conntrack-events-support-multiple-registrant.patch
-                elif[ "$kernel_version" = "5.10" ]; then
+                elif [ "$kernel_version" = "5.10" ]; then
                   cp -f $TURBOACC_PATH/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch
                 else
                   echo "不支持的内核版本：$kernel_version"
