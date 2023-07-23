@@ -127,11 +127,11 @@ jobs:
                   echo "不支持的内核版本：$kernel_version"
                   exit 1
                 fi
-                echo "#  CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-$kernel_version
+                echo "# CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-$kernel_version
                 if  [ "${{ matrix.compile }}" = "SHORTCUT_FE" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_CM" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
                   cp -f $TURBOACC_PATH/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
                   cp -f $TURBOACC_PATH/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch
-                  echo "#  CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-$kernel_version
+                  echo "# CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-$kernel_version
                 fi
                 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
                 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
@@ -293,7 +293,7 @@ jobs:
               cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact
     
           - name: 上传build artifacts
-            uses: actions/upload-artifact@v2
+            uses: actions/upload-artifact@v3
             with:
               name: packages-${{ matrix.tag_branche }}-${{ matrix.compile }}
               path: ${{ env.OPENWRT_ROOT_PATH }}/artifact/**
