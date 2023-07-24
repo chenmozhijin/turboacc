@@ -90,9 +90,9 @@ jobs:
             echo "FIREWALL4_NEW_VERSION=$FIREWALL4_NEW_VERSION"
             echo "NFTABLES_NEW_VERSION=$NFTABLES_NEW_VERSION"
             echo "LIBNFTNL_NEW_VERSION=$LIBNFTNL_NEW_VERSION"
-            echo "FIREWALL4_VERSION=$FIREWALL4_NEW_VERSION" > version
-            echo "NFTABLES_VERSION=$NFTABLES_NEW_VERSION" >> version
-            echo "LIBNFTNL_VERSION=$LIBNFTNL_NEW_VERSION" >> version
+            echo "FIREWALL4_VERSION=$FIREWALL4_NEW_VERSION" > $OUTPUT_PATH/push/version
+            echo "NFTABLES_VERSION=$NFTABLES_NEW_VERSION" >> $OUTPUT_PATH/push/version
+            echo "LIBNFTNL_VERSION=$LIBNFTNL_NEW_VERSION" >> $OUTPUT_PATH/push/version
             mkdir -p $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4 $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables $COMPARE_PATH/new/libnftnl-$LIBNFTNL_NEW_VERSION/libnftnl
             cp -RT $COMPARE_PATH/new/firewall4/ $COMPARE_PATH/new/firewall4-$FIREWALL4_NEW_VERSION/firewall4
             cp -RT $COMPARE_PATH/new/nftables/ $COMPARE_PATH/new/nftables-$NFTABLES_NEW_VERSION/nftables
