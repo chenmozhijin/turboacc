@@ -40,7 +40,7 @@ rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/netw
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
 cp -RT ./turboacc_tmp/turboacc/firewall4-$(grep -o 'FIREWALL4_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/firewall4 ./package/network/config/firewall4
-cp -RT ./turboacc_tmp/turboacc/libnftnl-$(grep -o 'LIBNFTN_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
+cp -RT ./turboacc_tmp/turboacc/libnftnl-$(grep -o 'LIBNFTNL_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
 cp -RT ./turboacc_tmp/turboacc/nftables-$(grep -o 'NFTABLES_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/nftables ./package/network/utils/nftables
 rm -rf turboacc_tmp
 echo "# CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.10
@@ -70,7 +70,7 @@ rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/netw
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
 cp -RT ./turboacc_tmp/turboacc/firewall4-$(grep -o 'FIREWALL4_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/firewall4 ./package/network/config/firewall4
-cp -RT ./turboacc_tmp/turboacc/libnftnl-$(grep -o 'LIBNFTN_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
+cp -RT ./turboacc_tmp/turboacc/libnftnl-$(grep -o 'LIBNFTNL_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
 cp -RT ./turboacc_tmp/turboacc/nftables-$(grep -o 'NFTABLES_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/nftables ./package/network/utils/nftables
 rm -rf turboacc_tmp
 echo "# CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-5.15
@@ -100,7 +100,7 @@ rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/netw
 mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
 cp -r ./turboacc_tmp/turboacc/shortcut-fe ./package/turboacc
 cp -RT ./turboacc_tmp/turboacc/firewall4-$(grep -o 'FIREWALL4_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/firewall4 ./package/network/config/firewall4
-cp -RT ./turboacc_tmp/turboacc/libnftnl-$(grep -o 'LIBNFTN_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
+cp -RT ./turboacc_tmp/turboacc/libnftnl-$(grep -o 'LIBNFTNL_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
 cp -RT ./turboacc_tmp/turboacc/nftables-$(grep -o 'NFTABLES_VERSION=.*' ./turboacc_tmp/turboacc/version | cut -d '=' -f 2)/nftables ./package/network/utils/nftables
 rm -rf turboacc_tmp
 echo "# CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-6.1
