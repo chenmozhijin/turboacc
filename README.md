@@ -5,6 +5,7 @@
 
 编译测试：[![TEST Status](https://github.com/chenmozhijin/turboacc/actions/workflows/test.yml/badge.svg)](https://github.com/chenmozhijin/turboacc/actions/workflows/test.yml)
 依赖自动更新：[![UPDATE Status](https://github.com/chenmozhijin/turboacc/actions/workflows/update.yml/badge.svg)](https://github.com/chenmozhijin/turboacc/actions/workflows/update.yml)
+
 ## 需要的依赖/䃼丁
 
 Shortcut-FE需要：
