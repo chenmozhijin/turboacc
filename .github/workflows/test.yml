@@ -91,9 +91,9 @@ jobs:
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
               if [ "${{ matrix.tag_branche }}" = "master-6.1" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
-                echo "CONFIG_TARGET_ipq806x=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_ipq806x_generic=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_ipq806x_generic_DEVICE_arris_tr4400-v2=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_qualcommax=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_qualcommax_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_qualcommax_ipq807x_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
               else
                 echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
                 echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
@@ -175,9 +175,9 @@ jobs:
               rm -rf .config .config.old tmp
               ls -la
               if [ "${{ matrix.tag_branche }}" = "master-6.1" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
-                echo "CONFIG_TARGET_ipq806x=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_ipq806x_generic=y" >> $OPENWRT_ROOT_PATH/.config
-                echo "CONFIG_TARGET_ipq806x_generic_DEVICE_arris_tr4400-v2=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_qualcommax=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_qualcommax_ipq807x=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_qualcommax_ipq807x_DEVICE_redmi_ax6=y" >> $OPENWRT_ROOT_PATH/.config
               else
                 echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
                 echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
