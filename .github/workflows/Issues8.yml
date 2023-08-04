@@ -70,7 +70,9 @@ jobs:
                 make download -j16 || make download -j1 V=s
 
           - name: make
-            run: make -j $(($(nproc)+1))
+            run: |
+              cd openwrt
+              make -j $(($(nproc)+1))
          
           - name: 上传固件
             uses: actions/upload-artifact@v3
