@@ -121,6 +121,12 @@ make menuconfig
 + 在 > LuCI > 3. Applications中选中luci-app-turboacc
 + 如果你想用要一个用GitHub Actions云编译带turboacc官方源码的openwrt可以看看这个仓库[OpenWrt-K](https://github.com/chenmozhijin/OpenWrt-K)
 
+## 注意
+
+1. 软件流量分载为firewall4自带的功能(见firewall4的[Makefile](https://github.com/openwrt/openwrt/blob/afa229038c05ba0ca20595d7f73bea94db21d3a6/package/network/config/firewall4/Makefile#L25C31-L25C48))按理来说其兼容性与稳定性都比较好，一般不需要sfe。
+2. 如不需要sfe可以删除953与613补丁。
+3. 默认的使用方法会把firewall4、libnftnl、nftables替换最新修补后的版本，如你遇到问题可以尝试使用旧版firewall4、libnftnl、nftables。（package分支中有旧版存档）
+
 ## 插件预览
 
 ![插件预览](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
