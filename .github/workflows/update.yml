@@ -153,13 +153,13 @@ jobs:
             cd $OUTPUT_PATH/push/
             tar cvpzf $GITHUB_WORKSPACE/push.tgz *
             
-        - name: 上传 cmzj_package
+        - name: 上传 测试用文件
           uses: actions/upload-artifact@v3
           with:
             name: test
             path: test.tgz
 
-        - name: 上传 cmzj_patch
+        - name: 上传 推送用文件
           uses: actions/upload-artifact@v3
           with:
             name: push
