@@ -132,9 +132,7 @@ Dependencies for Each Feature:
 - Software Flow Offloading (Flow Offload): [kmod-nft-offload](https://github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netfilter.mk#L1182C1-L1199C42) (Included in official OpenWrt)
 - Shortcut-FE: [shortcut-fe](https://github.com/chenmozhijin/turboacc/tree/package/shortcut-fe), 952 patch, 953 patch
 - Full Cone NAT (FULLCONE NAT): [nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone), patched firewall4, libnftnl, nftables, and 952 patch
-- BBR Congestion Control Algorithm: [kmod-tcp-bbr](https://
-
-github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netsupport.mk#L1036C1-L1057C38) (Included in official OpenWrt)
+- BBR Congestion Control Algorithm: [kmod-tcp-bbr](https://github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netsupport.mk#L1036C1-L1057C38) (Included in official OpenWrt)
 
 Unofficial dependencies for OpenWrt not included by default are available in the [package branch](https://github.com/chenmozhijin/turboacc/tree/package).
 
