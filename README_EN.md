@@ -1,18 +1,19 @@
 # luci-app-turboacc
 
-中文|[English](https://github.com/chenmozhijin/turboacc/blob/luci/README_EN.md)
+[中文](https://github.com/chenmozhijin/turboacc/blob/luci/README.md)|English
 
-一个适用于官方openwrt(22.03/23.05) firewall4的turboacc  
-包括以下功能：软件流量分载、Shortcut-FE、全锥型 NAT、BBR 拥塞控制算法  
+A turboacc package for official OpenWrt (22.03/23.05) firewall4, including the following features: software flow offloading, Shortcut-FE, full-cone NAT, and BBR congestion control algorithm.
 
- 编译测试：[![TEST Status](https://github.com/chenmozhijin/turboacc/actions/workflows/test.yml/badge.svg)](https://github.com/chenmozhijin/turboacc/actions/workflows/test.yml)  
- 依赖自动更新：[![UPDATE Status](https://github.com/chenmozhijin/turboacc/actions/workflows/update.yml/badge.svg)](https://github.com/chenmozhijin/turboacc/actions/workflows/update.yml)
+Compilation and Testing:
 
-## 使用方法
+- TEST Status: [![TEST Status](https://github.com/chenmozhijin/turboacc/actions/workflows/test.yml/badge.svg)](https://github.com/chenmozhijin/turboacc/actions/workflows/test.yml)
+- Automatic Dependency Updates: [![UPDATE Status](https://github.com/chenmozhijin/turboacc/actions/workflows/update.yml/badge.svg)](https://github.com/chenmozhijin/turboacc/actions/workflows/update.yml)
 
-### 22.03(kernel-5.10)
+## Usage
 
-+ 在openwrt源代码所在目录执行：
+### 22.03 (Kernel 5.10)
+
+- In the directory where the OpenWrt source code is located, execute the following commands:
 
 ```bash
 mkdir -p turboacc_tmp ./package/turboacc
@@ -40,9 +41,9 @@ echo "# CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.10
 ./scripts/feeds install -a
 ```
 
-### 23.05/master(kernel-5.15)
+### 23.05/master (Kernel 5.15)
 
-+ 在openwrt源代码所在目录执行：
+- In the directory where the OpenWrt source code is located, execute the following commands:
 
 ```bash
 mkdir -p turboacc_tmp ./package/turboacc
@@ -70,9 +71,9 @@ echo "# CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-5.15
 ./scripts/feeds install -a
 ```
 
-### master(kernel-6.1)
+### master (Kernel 6.1)
 
-+ 在openwrt源代码所在目录执行：
+- In the directory where the OpenWrt source code is located, execute the following commands:
 
 ```bash
 mkdir -p turboacc_tmp ./package/turboacc
@@ -100,47 +101,47 @@ echo "# CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-6.1
 ./scripts/feeds install -a
 ```
 
-+ 注意：master分支的部分架构已将6.1内核设为默认内核，请检测你编译架构的默认内核版本。
-+ 这将会下载luci-app-turboacc、nft-fullcone替换firewall4、libnftnl、nftables并打上952、953补丁。
-+ 之后执行
+Please note that for the "master" branch, some architectures have set the 6.1 kernel as the default. Check your architecture's default kernel version.
+
+After the setup, execute:
 
 ```bash
 make menuconfig
 ```
 
-+ 在 > LuCI > 3. Applications中选中luci-app-turboacc
-+ 如果你想用要一个用GitHub Actions云编译带turboacc官方源码的openwrt可以看看这个仓库[OpenWrt-K](https://github.com/chenmozhijin/OpenWrt-K)
+Navigate to > LuCI > 3. Applications and select "luci-app-turboacc".
 
-## 注意
+If you want to use GitHub Actions for cloud compiling OpenWrt with the official source code and turboacc, you can refer to this repository:  [OpenWrt-K](https://github.com/chenmozhijin/OpenWrt-K).
 
-1. 软件流量分载为firewall4自带的功能(见firewall4的[Makefile](https://github.com/openwrt/openwrt/blob/afa229038c05ba0ca20595d7f73bea94db21d3a6/package/network/config/firewall4/Makefile#L25C31-L25C48))按理来说其兼容性与稳定性都比较好，一般不需要sfe(sfe相关的功能我都没有测试过)。
-2. 如不需要sfe可以删除953与613补丁。
-3. 默认的使用方法会把firewall4、libnftnl、nftables替换最新修补后的版本，如你遇到问题可以尝试使用旧版firewall4、libnftnl、nftables。（package分支中有旧版存档）
+## Notes
 
-## 插件预览
+1. Software flow offloading (Flow Offload) is a feature built into firewall4 (see [firewall4 Makefile](https://github.com/openwrt/openwrt/blob/afa229038c05ba0ca20595d7f73bea94db21d3a6/package/network/config/firewall4/Makefile#L25C31-L25C48)). It is generally well-compatible and stable, so SFE (SFE-related features) might not be necessary.
+2. If SFE is not required, you can skip the 953 and 613 patches.
+3. The default method provided will replace firewall4, libnftnl, and nftables with the latest patched versions. If you encounter issues, you can try using older versions of firewall4, libnftnl, and nftables (available in the "package" branch).
 
-![插件预览](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
+## Plugin Preview
 
-## 关于
+![Plugin Preview](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
 
-此仓库的luci-app-turboacc是基于LEDE仓库的[luci-app-turboacc](https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-turboacc)修改而来的，去除了DNS相关功能并使其支持firewall4，但不再支持firewall3。
+## About
 
-各功能的依赖：
+The luci-app-turboacc in this repository is based on the [luci-app-turboacc](https://github.com/coolsnowwolf/luci/tree/master/applications/luci-app-turboacc) from the LEDE repository. It has been modified to remove DNS-related features and add support for firewall4, but it no longer supports firewall3.
 
-软件流量分载(Flow Offload)：[kmod-nft-offload](https://github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netfilter.mk#L1182C1-L1199C42)(官方openwrt自带)
+Dependencies for Each Feature:
 
-Shortcut-FE：[shortcut-fe](https://github.com/chenmozhijin/turboacc/tree/package/shortcut-fe)、952补丁、953补丁
+- Software Flow Offloading (Flow Offload): [kmod-nft-offload](https://github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netfilter.mk#L1182C1-L1199C42) (Included in official OpenWrt)
+- Shortcut-FE: [shortcut-fe](https://github.com/chenmozhijin/turboacc/tree/package/shortcut-fe), 952 patch, 953 patch
+- Full Cone NAT (FULLCONE NAT): [nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone), patched firewall4, libnftnl, nftables, and 952 patch
+- BBR Congestion Control Algorithm: [kmod-tcp-bbr](https://
 
-全锥型 NAT（FULLCONE NAT）：[nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone)、修补的firewall4、libnftnl、nftables与952补丁
+github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netsupport.mk#L1036C1-L1057C38) (Included in official OpenWrt)
 
-BBR 拥塞控制算法：[kmod-tcp-bbr](https://github.com/openwrt/openwrt/blob/80edfaf675364835e6d2e17d97ebec6afc6b2103/package/kernel/linux/modules/netsupport.mk#L1036C1-L1057C38)(官方openwrt自带)
+Unofficial dependencies for OpenWrt not included by default are available in the [package branch](https://github.com/chenmozhijin/turboacc/tree/package).
 
-非官方openwrt自带的依赖存档在[package分支](https://github.com/chenmozhijin/turboacc/tree/package)。
+## Acknowledgments
 
-## 感谢
+Special thanks to the following projects:
 
- 感谢以下项目：
-
-+ [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)(952、953补丁与sfe来源)
-+ [wongsyrone/lede-1](https://github.com/wongsyrone/lede-1)(firewall4、libnftnl、nftables修补补丁来源)
-+ [fullcone-nat-nftables/nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone)(全锥型 NAT依赖)
+- [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede) (Source of 952, 953 patches, and SFE)
+- [wongsyrone/lede-1](https://github.com/wongsyrone/lede-1) (Source of firewall4, libnftnl, nftables patched patches)
+- [fullcone-nat-nftables/nft-fullcone](https://github.com/fullcone-nat-nftables/nft-fullcone) (Dependency for Full Cone NAT)
