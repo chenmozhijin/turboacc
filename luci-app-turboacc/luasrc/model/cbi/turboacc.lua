@@ -50,7 +50,7 @@ fullcone_nat.default = 0
 fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
 fullcone6 = s:option(Flag, "fullcone6", translate("IPv6 Full Cone NAT"))
 fullcone6.default = 0
-fullcone6.description = translate("Enabling IPv6 Full Cone NAT adds an additional layer of NAT. In the case of IPv6, if you acquire an IPv6 prefix through IPv6 Prefix Delegation, each device can be assigned a public IPv6 address, eliminating the need for IPv6 Full Cone NAT.")
+fullcone6.description = translate("Enabling IPv6 Full Cone NAT adds an extra layer of NAT to IPv6. In IPv6, if you obtain an IPv6 prefix through IPv6 Prefix Delegation, each device can be assigned a public IPv6 address, eliminating the need for IPv6 Full Cone NAT.")
 fullcone6:depends("fullcone_nat", 1)
 end
 
