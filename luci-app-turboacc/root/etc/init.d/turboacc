@@ -19,6 +19,7 @@ inital_conf(){
 	config_get "sfe_flow" "config" "sfe_flow" "0"
 	config_get "bbr_cca" "config" "bbr_cca" "0"
 	config_get "fullcone_nat" "config" "fullcone_nat" "0"
+	config_get "fullcone6" "config" "fullcone6" "0"
 
 	[ ! -e "/lib/modules/$(uname -r)/nft_flow_offload.ko" ] && { sw_flow="0"; hw_flow="0"; }
 	[ ! -e "/lib/modules/$(uname -r)/tcp_bbr.ko" ] && bbr_cca="0"
@@ -64,6 +65,9 @@ start(){
 	uci set firewall.@defaults[0].flow_offloading="${sw_flow}"
 	uci set firewall.@defaults[0].flow_offloading_hw="${hw_flow}"
 	uci set firewall.@defaults[0].fullcone="${fullcone_nat}"
+	for i in $(uci show firewall|grep "^firewall.@zone\[[0-9]*\]\.fullcone6" |sed  "s/=.*//g"); do
+      uci set "$i"="${fullcone6}"
+    done
 	uci commit firewall
 
 	[ "${sw_flow}" -ne "1" ] && [ "${sfe_flow}" -eq "1" ] && {
@@ -93,6 +97,9 @@ stop(){
 	uci set firewall.@defaults[0].flow_offloading="${sw_flow}"
 	uci set firewall.@defaults[0].flow_offloading_hw="${hw_flow}"
 	uci set firewall.@defaults[0].fullcone="${fullcone_nat}"
+	for i in $(uci show firewall|grep "^firewall.@zone\[[0-9]*\]\.fullcone6" |sed  "s/=.*//g"); do
+      uci set "$i"="${fullcone6}"
+    done
 	uci commit firewall
 
 	[ "${hw_wed}" -eq "0" ] && {
