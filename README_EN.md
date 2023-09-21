@@ -122,6 +122,7 @@ If you want to use GitHub Actions for cloud compiling OpenWrt with the official 
 ## Plugin Preview
 
 ![Plugin Preview](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
+![Effect preview](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/2.png)
 
 ## About
 

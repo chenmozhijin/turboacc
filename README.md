@@ -120,6 +120,7 @@ make menuconfig
 ## 插件预览
 
 ![插件预览](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/1.png)
+![效果预览](https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/img/2.png)
 
 ## 关于
 
