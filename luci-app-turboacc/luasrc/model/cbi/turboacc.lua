@@ -48,6 +48,10 @@ if nixio.fs.access("/lib/modules/" .. kernel_version .. "/nft_fullcone.ko") then
 fullcone_nat = s:option(Flag, "fullcone_nat", translate("FullCone NAT"))
 fullcone_nat.default = 0
 fullcone_nat.description = translate("Using FullCone NAT can improve gaming performance effectively")
+fullcone6 = s:option(Flag, "fullcone6", translate("IPv6 Full Cone NAT"))
+fullcone6.default = 0
+fullcone6.description = translate("Enabling IPv6 Full Cone NAT adds an additional layer of NAT. In the case of IPv6, if you acquire an IPv6 prefix through IPv6 Prefix Delegation, each device can be assigned a public IPv6 address, eliminating the need for IPv6 Full Cone NAT.")
+fullcone6:depends("fullcone_nat", 1)
 end
 
 if nixio.fs.access("/lib/modules/" .. kernel_version .. "/tcp_bbr.ko") then
