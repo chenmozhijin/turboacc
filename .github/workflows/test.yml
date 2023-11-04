@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       max-parallel: 8
       matrix:
-        tag_branche: [master-6.1,master-5.15,openwrt-23.05,openwrt-22.03,v23.05.0-rc4,v22.03.5]
+        tag_branche: [master-6.1,master-5.15,openwrt-23.05,openwrt-22.03,v23.05.0,v22.03.5]
         compile: [FLOW_OFFLOAD,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
         exclude:
           - tag_branche: master-5.15
@@ -238,8 +238,8 @@ jobs:
     #          CONFIG_TARGET_SUBTARGET=$(sed -n 's/CONFIG_TARGET_SUBTARGET="\(.*\)"/\1/p' .config) #64
     #          if [ "${{ matrix.tag_branche }}" = "master" ]; then
     #            RELEASE=snapshots
-    #          elif [ "${{ matrix.tag_branche }}" = "openwrt-23.05" ] || [ "${{ matrix.tag_branche }}" = "v23.05.0-rc4" ]; then
-    #            RELEASE=releases/23.05.0-rc4
+    #          elif [ "${{ matrix.tag_branche }}" = "openwrt-23.05" ] || [ "${{ matrix.tag_branche }}" = "v23.05.0" ]; then
+    #            RELEASE=releases/v23.05.0
     #          elif [ "${{ matrix.tag_branche }}" = "openwrt-22.03" ] || [ "${{ matrix.tag_branche }}" = "v22.03.5" ]; then
     #            RELEASE=releases/22.03.5
     #          fi
