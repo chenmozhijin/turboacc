@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       max-parallel: 8
       matrix:
-        tag_branche: [master-6.1,master-5.15,openwrt-23.05,openwrt-22.03,v23.05.0,v22.03.5]
+        tag_branche: [master-6.1,master-5.15,openwrt-23.05,openwrt-22.03,v23.05.2,v22.03.5]
         compile: [FLOW_OFFLOAD,SHORTCUT_FE,SHORTCUT_FE_CM,SHORTCUT_FE_DRV]
         exclude:
           - tag_branche: master-5.15
@@ -299,6 +299,7 @@ jobs:
             run: |
               mkdir -p ./artifact
               cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact
+              cp -rf $(find ./bin/targets/ -type f -name "*.ipk") ./artifact
     
           - name: 上传build artifacts
             uses: actions/upload-artifact@v3
