@@ -31,7 +31,7 @@ git clone --depth=1 --single-branch https://github.com/fullcone-nat-nftables/nft
 git clone --depth=1 --single-branch https://github.com/chenmozhijin/turboacc "$TMPDIR/turboacc/turboacc" || exit 1
 mv "$TMPDIR/turboacc/turboacc/luci-app-turboacc" "$TMPDIR/turboacc/luci-app-turboacc"
 rm -rf "$TMPDIR/turboacc/turboacc"
-mv "$TMPDIR/package/shortcut-fe" "$TMPDIR/turboacc"
+mv "$TMPDIR/package/shortcut-fe" "$TMPDIR/turboacc/shortcut-fe"
 
 for kernel_version in $kernel_versions ;do
     patch_953_path="./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch"
