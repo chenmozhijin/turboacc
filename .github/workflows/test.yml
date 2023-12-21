@@ -108,52 +108,7 @@ jobs:
           - name: 添加turboacc
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
-              kernel_version="$(sed -n '/CONFIG_LINUX_/p' $OPENWRT_ROOT_PATH/.config | sed -e 's/CONFIG_LINUX_//' -e 's/=y//' -e 's/_/./g')"
-              echo "kernel_version=$kernel_version" >> $GITHUB_ENV
-              echo kernel_version=$kernel_version
-              if  [ "$kernel_version" = "6.1" ] || [ "$kernel_version" = "5.15" ] || [ "$kernel_version" = "5.10" ] ; then
-                mkdir -p turboacc_tmp ./package/turboacc
-                cd turboacc_tmp 
-                #git clone https://github.com/chenmozhijin/turboacc -b package
-                cd ../package/turboacc
-                cp -RT $TURBOACC_PATH/nft-fullcone ./nft-fullcone
-                #git clone https://github.com/fullcone-nat-nftables/nft-fullcone
-                cp -RT $LUCI_APP_TURBOACC_PATH/luci-app-turboacc ./luci-app-turboacc
-                #git clone https://github.com/chenmozhijin/turboacc
-                #mv ./turboacc/luci-app-turboacc ./luci-app-turboacc
-                rm -rf ./turboacc
-                cd ../..
-                if  [ "$kernel_version" = "6.1" ] || [ "$kernel_version" = "5.15" ]; then
-                  cp -f $TURBOACC_PATH/hack-$kernel_version/952-add-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-$kernel_version/952-add-net-conntrack-events-support-multiple-registrant.patch
-                elif [ "$kernel_version" = "5.10" ]; then
-                  cp -f $TURBOACC_PATH/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch ./target/linux/generic/hack-$kernel_version/952-net-conntrack-events-support-multiple-registrant.patch
-                else
-                  echo "不支持的内核版本：$kernel_version"
-                  exit 1
-                fi
-                echo "# CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> target/linux/generic/config-$kernel_version
-                if  [ "${{ matrix.compile }}" = "SHORTCUT_FE" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_CM" ] || [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
-                  cp -f $TURBOACC_PATH/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch ./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-                  cp -f $TURBOACC_PATH/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch ./target/linux/generic/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch
-                  echo "# CONFIG_SHORTCUT_FE is not set" >> target/linux/generic/config-$kernel_version
-                fi
-                rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
-                mkdir -p ./package/network/config/firewall4 ./package/libs/libnftnl ./package/network/utils/nftables
-                cp -r $TURBOACC_PATH/shortcut-fe ./package/turboacc
-                cp -RT $TURBOACC_PATH/firewall4-$(grep -o 'FIREWALL4_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/firewall4 ./package/network/config/firewall4
-                cp -RT $TURBOACC_PATH/libnftnl-$(grep -o 'LIBNFTNL_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/libnftnl ./package/libs/libnftnl
-                cp -RT $TURBOACC_PATH/nftables-$(grep -o 'NFTABLES_VERSION=.*' $TURBOACC_PATH/version | cut -d '=' -f 2)/nftables ./package/network/utils/nftables
-                rm -rf turboacc_tmp
-                ./scripts/feeds update -a
-                ./scripts/feeds install -a
-              else
-                echo "不支持的内核版本：$kernel_version"
-                exit 1
-              fi
-              if [ "${{ matrix.compile }}" = "FLOW_OFFLOAD" ]; then
-                rm -rf ./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
-                rm -rf ./target/linux/generic/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch
-              fi
+              curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
               #log
               echo "libnftnl-file"
               ls $OPENWRT_ROOT_PATH/package/libs/libnftnl
