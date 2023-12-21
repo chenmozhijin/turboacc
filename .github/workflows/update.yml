@@ -261,6 +261,7 @@ jobs:
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
               curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
+              kernel_version="$(sed -n '/CONFIG_LINUX_/p' $OPENWRT_ROOT_PATH/.config | sed -e 's/CONFIG_LINUX_//' -e 's/=y//' -e 's/_/./g')"
               #log
               echo "libnftnl-file"
               ls $OPENWRT_ROOT_PATH/package/libs/libnftnl
