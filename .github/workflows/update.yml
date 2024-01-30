@@ -71,7 +71,7 @@ jobs:
             cp $CLONE_PATH/chenmozhijin/turboacc/pending-5.15/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-5.15/613-netfilter_optional_tcp_window_check.patch
             cp $CLONE_PATH/chenmozhijin/turboacc/pending-6.1/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/original/pending-6.1/613-netfilter_optional_tcp_window_check.patch
             #shortcut-fe
-            cp -RT $CLONE_PATH/coolsnowwolf/lede/package/lean/shortcut-fe $COMPARE_PATH/new/shortcut-fe
+            cp -RT $CLONE_PATH/coolsnowwolf/lede/package/qca/shortcut-fe $COMPARE_PATH/new/shortcut-fe
             cp -RT $CLONE_PATH/chenmozhijin/turboacc/shortcut-fe $COMPARE_PATH/original/shortcut-fe
             sed -i "s#DEPENDS:=@TARGET_ipq806x||TARGET_ipq807x +kmod-shortcut-fe#DEPENDS:=@TARGET_ipq806x||TARGET_ipq807x||TARGET_qualcommax +kmod-shortcut-fe#g" $COMPARE_PATH/new/shortcut-fe/simulated-driver/Makefile
             #firewall4 nftables libnftnl
