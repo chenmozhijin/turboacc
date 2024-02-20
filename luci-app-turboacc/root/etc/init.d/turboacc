@@ -130,33 +130,34 @@ check_status(){
 	case "$1" in
 	"fastpath")
 		if [ "$(cat "/sys/module/nft_flow_offload/refcnt" 2>"/dev/null" || echo -1)" -gt "0" ]; then
-			echo -n "Flow Offloading"
-			exit 0
+			msg="Flow Offloading"
+			exit_code=0
 		elif [ "$(cat "/sys/module/nft_flow_offload/refcnt" 2>"/dev/null")" -eq "0" ] && \
 		    [ -e /sys/kernel/debug/hnat/hnat_version ]; then
-			echo -n "MediaTek HWNAT"
-			exit 0
+			msg="MediaTek HWNAT"
+			exit_code=0
 		elif [ -d /sys/kernel/debug/ecm/ecm_nss_ipv4 ]; then
-			echo -n "QCA-NSS-ECM"
-			exit 0
+			msg="QCA-NSS-ECM"
+			exit_code=0
 		elif [ -d /sys/kernel/debug/ecm/ecm_sfe_ipv4 ]; then
-			echo -n "QCA-ECM-SFE"
-			exit 0
+			msg="QCA-ECM-SFE"
+			exit_code=0
 		elif [ -d /sys/module/fast_classifier ]; then
-			echo -n "Shortcut-FE"
-			exit 0
+			msg="Shortcut-FE"
+			exit_code=0
 		elif [ -d /sys/module/shortcut_fe_cm ]; then
-			echo -n "Shortcut-FE ECM"
-			exit 0
+			msg="Shortcut-FE ECM"
+			exit_code=0
 		else
-			exit 1
+			msg=""
+			exit_code=1
 		fi
 		;;
 	"fullconenat")
     	if [ "$(cat "/sys/module/nft_fullcone/refcnt" 2>"/dev/null" || echo -1)" -gt "0" ]; then
-			exit 0
+			exit_code=0
 		else
-			exit 1
+			exit_code=1
 		fi
 		;;
 	"bbr")
@@ -167,4 +168,8 @@ check_status(){
 		exit 2
 		;;
 	esac
-}		
+	if [ "$msg" != "" ] && { [ $# = 1 ] || { [ $# = 2 ] && [ "$2" = 1 ]; }; }; then
+    	echo -n "$msg"
+	fi
+	exit "$exit_code"
+}

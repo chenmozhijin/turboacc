@@ -1,13 +1,13 @@
 # SPDX-Identifier-License: GPL-3.0-only
 #
-# Copyright (C) 2023 沉默の金 <cmzj11@gmail.com>
+# Copyright (C) 2023-2024 沉默の金 <cmzj@cmzj.org>
 # Copyright (C) 2022 Lean <coolsnowwolf@gmail.com>
 # Copyright (C) 2019-2022 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-turboacc
-PKG_VERSION:=1.2
+PKG_VERSION:=1.3
 PKG_RELEASE:=2
 
 PKG_LICENSE:=GPL-3.0-only

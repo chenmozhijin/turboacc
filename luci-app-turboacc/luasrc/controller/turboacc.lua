@@ -13,7 +13,7 @@ function index()
 end
 
 local function fastpath_status()
-	return luci.sys.call("/etc/init.d/turboacc check_status fastpath") == 0
+	return luci.sys.call("/etc/init.d/turboacc check_status fastpath 0") == 0
 end
 
 local function bbr_status()
