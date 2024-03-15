@@ -28,9 +28,9 @@ jobs:
             echo "CLONE_PATH=$CLONE_PATH" >> $GITHUB_ENV
             echo "OUTPUT_PATH=$OUTPUT_PATH" >> $GITHUB_ENV
             mkdir -p $COMPARE_PATH/new/nft-fullcone  $COMPARE_PATH/new/firewall4/patches/ $COMPARE_PATH/new/nftables/patches/ $COMPARE_PATH/new/libnftnl/patches/
-            mkdir -p $COMPARE_PATH/new/hack-5.10 $COMPARE_PATH/new/hack-5.15 $COMPARE_PATH/new/hack-6.1 $COMPARE_PATH/new/pending-5.10 $COMPARE_PATH/new/pending-5.15 $COMPARE_PATH/new/pending-6.1
+            mkdir -p $COMPARE_PATH/new/hack-5.10 $COMPARE_PATH/new/hack-5.15 $COMPARE_PATH/new/hack-6.1 $COMPARE_PATH/new/hack-6.6 $COMPARE_PATH/new/pending-5.10 $COMPARE_PATH/new/pending-5.15 $COMPARE_PATH/new/pending-6.1 $COMPARE_PATH/new/pending-6.6
             mkdir -p $COMPARE_PATH/original/nft-fullcone
-            mkdir -p $COMPARE_PATH/original/hack-5.10 $COMPARE_PATH/original/hack-5.15 $COMPARE_PATH/original/hack-6.1 $COMPARE_PATH/original/pending-5.10 $COMPARE_PATH/original/pending-5.15 $COMPARE_PATH/original/pending-6.1
+            mkdir -p $COMPARE_PATH/original/hack-5.10 $COMPARE_PATH/original/hack-5.15 $COMPARE_PATH/original/hack-6.1 $COMPARE_PATH/original/hack-6.6 $COMPARE_PATH/original/pending-5.10 $COMPARE_PATH/original/pending-5.15 $COMPARE_PATH/original/pending-6.1 $COMPARE_PATH/original/pending-6.6
 
         - name: 克隆
           run: |
