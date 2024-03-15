@@ -36,7 +36,7 @@ cp -r "$TMPDIR/package/shortcut-fe" "$TMPDIR/turboacc/shortcut-fe"
 for kernel_version in $kernel_versions ;do
     patch_953_path="./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch"
     patch_613_path="./target/linux/generic/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch"
-    if  [ "$kernel_version" = "6.1" ] || [ "$kernel_version" = "5.15" ]; then
+    if  [ "$kernel_version" = "6.6" ] || [ "$kernel_version" = "6.1" ] || [ "$kernel_version" = "5.15" ]; then
         patch_952_path="./target/linux/generic/hack-$kernel_version/952-add-net-conntrack-events-support-multiple-registrant.patch"
         patch_952="952-add-net-conntrack-events-support-multiple-registrant.patch"
     elif [ "$kernel_version" = "5.10" ]; then
