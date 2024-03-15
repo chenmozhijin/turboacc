@@ -30,7 +30,9 @@ fi
 git clone --depth=1 --single-branch https://github.com/fullcone-nat-nftables/nft-fullcone "$TMPDIR/turboacc/nft-fullcone" || exit 1
 git clone --depth=1 --single-branch https://github.com/chenmozhijin/turboacc "$TMPDIR/turboacc/turboacc" || exit 1
 if [[ $# = 2 ]] && [[ $1 = "update" ]]; then
-    cp -r "$2" "$TMPDIR/package"
+    mkdir -p "$TMPDIR/package"
+    cp -RT "$2" "$TMPDIR/package" || exit 1
+    echo "get the package from $2"
 else
     git clone --depth=1 --single-branch --branch "package" https://github.com/chenmozhijin/turboacc "$TMPDIR/package" || exit 1
 fi
