@@ -266,7 +266,7 @@ jobs:
           - name: 添加turboacc
             working-directory: ${{ env.OPENWRT_ROOT_PATH }}
             run: |
-              curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
+              curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh update ${{ env.TURBOACC_PATH }}
               kernel_version="$(sed -n '/CONFIG_LINUX_/p' $OPENWRT_ROOT_PATH/.config | sed -e 's/CONFIG_LINUX_//' -e 's/=y//' -e 's/_/./g')"
               #log
               echo "libnftnl-file"
