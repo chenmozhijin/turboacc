@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2016
 
 trap 'rm -rf "$TMPDIR"' EXIT
 TMPDIR=$(mktemp -d) || exit 1
@@ -8,6 +9,7 @@ if ! [ -d "./package" ]; then
     exit 1
 fi
 
+VERSION_NUMBER=$(sed -n '/VERSION_NUMBER:=$(if $(VERSION_NUMBER),$(VERSION_NUMBER),.*)/p' include/version.mk|sed -e 's/.*$(VERSION_NUMBER),//' -e 's/)//')
 kernel_versions="$(find "./include"|sed -n '/kernel-[0-9]/p'|sed -e "s@./include/kernel-@@" |sed ':a;N;$!ba;s/\n/ /g')"
 if [ -z "$kernel_versions" ]; then
     echo "Error: Unable to get kernel version, script exited"
@@ -75,9 +77,18 @@ done
 
 cp -r "$TMPDIR/turboacc" "./package/turboacc"
 rm -rf ./package/libs/libnftnl ./package/network/config/firewall4 ./package/network/utils/nftables
-cp -RT "$TMPDIR/package/firewall4-$(grep -o 'FIREWALL4_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)/firewall4" ./package/network/config/firewall4
-cp -RT "$TMPDIR/package/libnftnl-$(grep -o 'LIBNFTNL_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)/libnftnl" ./package/libs/libnftnl
-cp -RT "$TMPDIR/package/nftables-$(grep -o 'NFTABLES_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)/nftables" ./package/network/utils/nftables
+if [[ "$VERSION_NUMBER" =~ ^22.03.* ]]; then
+    FIREWALL4_VERSION="7ae5e14bbd7265cc67ec870c3bb0c8e197bb7ca9"
+    LIBNFTNL_VERSION="1.2.1"
+    NFTABLES_VERSION="1.0.2"
+else
+    FIREWALL4_VERSION=$(grep -o 'FIREWALL4_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
+    LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
+    NFTABLES_VERSION=-$(grep -o 'NFTABLES_VERSION=.*' "$TMPDIR/package/version" | cut -d '=' -f 2)
+fi
+cp -RT "$TMPDIR/package/firewall4-$FIREWALL4_VERSION/firewall4" ./package/network/config/firewall4
+cp -RT "$TMPDIR/package/libnftnl-$LIBNFTNL_VERSION/libnftnl" ./package/libs/libnftnl
+cp -RT "$TMPDIR/package/nftables-$NFTABLES_VERSION/nftables" ./package/network/utils/nftables
 
 echo "Finish"
 exit 0
