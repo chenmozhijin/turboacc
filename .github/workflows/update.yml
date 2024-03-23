@@ -157,22 +157,14 @@ jobs:
 
         - name: 准备上传
           run: |
-            cd $OUTPUT_PATH/test/
-            tar cvpzf $GITHUB_WORKSPACE/test.tgz *
             cd $OUTPUT_PATH/push/
-            tar cvpzf $GITHUB_WORKSPACE/push.tgz *
-            
-        - name: 上传 测试用文件
-          uses: actions/upload-artifact@v3
-          with:
-            name: test
-            path: test.tgz
+            tar cvpzf $GITHUB_WORKSPACE/new.tgz *
 
-        - name: 上传 推送用文件
+        - name: 上传 文件
           uses: actions/upload-artifact@v3
           with:
-            name: push
-            path: push.tgz
+            name: new
+            path: new.tgz
 
 
     test: 
@@ -190,17 +182,17 @@ jobs:
                 #master分支没有可用支持SHORTCUT_FE_DRV的5.15内核架构
         runs-on: ubuntu-22.04
         steps:
-          - name: 下载test
+          - name: 下载new
             uses: actions/download-artifact@v3
             with:
-                name: test
+                name: new
 
           - name: 解压
             run: |
                 mkdir -p turboacc
                 export TURBOACC_PATH="$(pwd)/turboacc"
                 echo "TURBOACC_PATH=$TURBOACC_PATH" >> $GITHUB_ENV
-                tar xvpfz $GITHUB_WORKSPACE/test.tgz -C $TURBOACC_PATH
+                tar xvpfz $GITHUB_WORKSPACE/new.tgz -C $TURBOACC_PATH
 
           - name: 检测
             run: ls -la $(find $GITHUB_WORKSPACE -type d)
@@ -454,17 +446,17 @@ jobs:
                 ref: 'package'
                 path: upload
 
-          - name: 下载push
+          - name: 下载new
             uses: actions/download-artifact@v3
             with:
-                name: push
+                name: new
 
           - name: 解压
             run: |
                 mkdir -p turboacc
                 export TURBOACC_PATH="$(pwd)/turboacc"
                 echo "TURBOACC_PATH=$TURBOACC_PATH" >> $GITHUB_ENV
-                tar xvpfz $GITHUB_WORKSPACE/push.tgz -C $TURBOACC_PATH
+                tar xvpfz $GITHUB_WORKSPACE/new.tgz -C $TURBOACC_PATH
 
           - name: 上传
             id: upload
