@@ -136,7 +136,8 @@ jobs:
               rm -rf .config .config.old tmp
               ls -la
               if [ "${{ matrix.tag_branche }}" = "master-k6.6" ]; then
-                echo "CONFIG_TARGET_mediatek=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_x86=y" >> $OPENWRT_ROOT_PATH/.config
+                echo "CONFIG_TARGET_x86_64=y" >> $OPENWRT_ROOT_PATH/.config
                 echo "CONFIG_LINUX_6_6=y" >> $OPENWRT_ROOT_PATH/.config
                 echo "CONFIG_TESTING_KERNEL=y" >> $OPENWRT_ROOT_PATH/.config
               elif [ "${{ matrix.compile }}" = "SHORTCUT_FE_DRV" ]; then
