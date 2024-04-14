@@ -146,6 +146,15 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  #include <linux/netdevice.h>
  #include <linux/slab.h>
  #include <linux/export.h>
+ @@ -123,7 +126,7 @@ static void ecache_work(struct work_stru
+ 	if (delay >= 0)
+ 		schedule_delayed_work(&cnet->ecache.dwork, delay);
+ }
+-
++#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+ static int __nf_conntrack_eventmask_report(struct nf_conntrack_ecache *e,
+ 					   const u32 events,
+ 					   const u32 missed,
 @@ -162,6 +165,35 @@ static int __nf_conntrack_eventmask_repo
  	return ret;
  }
@@ -319,6 +328,22 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	struct nf_conn *ct = item->ct;
  	struct sk_buff *skb;
  	unsigned int type;
+@@ -3094,6 +3101,7 @@ nla_put_failure:
+ }
+ 
+ #ifdef CONFIG_NF_CONNTRACK_EVENTS
++#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
+ static int
+ ctnetlink_expect_event(unsigned int events, const struct nf_exp_event *item)
+ {
+@@ -3143,6 +3151,7 @@ errout:
+ 	return 0;
+ }
+ #endif
++#endif
+ static int ctnetlink_exp_done(struct netlink_callback *cb)
+ {
+ 	if (cb->args[1])
 @@ -3750,11 +3757,17 @@ static int ctnetlink_stat_exp_cpu(struct
  }
  
