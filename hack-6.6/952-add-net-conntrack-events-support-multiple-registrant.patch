@@ -146,7 +146,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  #include <linux/netdevice.h>
  #include <linux/slab.h>
  #include <linux/export.h>
- @@ -123,7 +126,7 @@ static void ecache_work(struct work_stru
+@@ -123,7 +126,7 @@ static void ecache_work(struct work_stru
  	if (delay >= 0)
  		schedule_delayed_work(&cnet->ecache.dwork, delay);
  }
