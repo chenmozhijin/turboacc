@@ -58,6 +58,8 @@ jobs:
             # coolsnowwolf/lede#11211
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/new/hack-6.1/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
             #cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-6.6/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-6.6/952-add-net-conntrack-events-support-multiple-registrant.patch
+            cp $CLONE_PATH/chenmozhijin/turboacc/hack-6.6/952-add-net-conntrack-events-support-multiple-registrant.patch $COMPARE_PATH/new/hack-6.6/952-add-net-conntrack-events-support-multiple-registrant.patch
+            # coolsnowwolf/lede#11211
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/hack-6.6/953-net-patch-linux-kernel-to-support-shortcut-fe.patch $COMPARE_PATH/new/hack-6.6/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-5.10/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-5.10/613-netfilter_optional_tcp_window_check.patch
             cp $CLONE_PATH/coolsnowwolf/lede/target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch $COMPARE_PATH/new/pending-5.15/613-netfilter_optional_tcp_window_check.patch
