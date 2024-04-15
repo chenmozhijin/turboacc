@@ -158,7 +158,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 @@ -162,6 +165,35 @@ static int __nf_conntrack_eventmask_repo
  	return ret;
  }
- 
++#endif 
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +int nf_conntrack_eventmask_report(unsigned int eventmask, struct nf_conn *ct,
 +				  u32 portid, int report)
