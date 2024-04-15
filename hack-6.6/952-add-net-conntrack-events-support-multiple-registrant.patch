@@ -191,7 +191,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  int nf_conntrack_eventmask_report(unsigned int events, struct nf_conn *ct,
  				  u32 portid, int report)
  {
-@@ -197,10 +229,52 @@ int nf_conntrack_eventmask_report(unsign
+@@ -197,10 +229,53 @@ int nf_conntrack_eventmask_report(unsign
  
  	return ret;
  }
