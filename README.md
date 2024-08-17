@@ -12,11 +12,21 @@
 
 + 在openwrt源代码所在目录执行：
 
-```bash
-curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
-```
+    带sfe:
 
-> 这将会下载luci-app-turboacc、nft-fullcone 替换firewall4、libnftnl、nftables并打上952、953补丁。
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh
+    ```
+
+    > 这将会下载luci-app-turboacc、nft-fullcone、shortcut-fe 替换firewall4、libnftnl、nftables并打上952、613、953补丁。
+
+    不带sfe:
+
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/chenmozhijin/turboacc/luci/add_turboacc.sh -o add_turboacc.sh && bash add_turboacc.sh --no-sfe
+    ```
+
+    > 这将会下载luci-app-turboacc、nft-fullcone 替换firewall4、libnftnl、nftables并打上952补丁。
 
 + 之后执行
 
@@ -30,8 +40,7 @@ make menuconfig
 ## 注意
 
 1. 软件流量分载为firewall4自带的功能(见firewall4的[Makefile](https://github.com/openwrt/openwrt/blob/afa229038c05ba0ca20595d7f73bea94db21d3a6/package/network/config/firewall4/Makefile#L25C31-L25C48))按理来说其兼容性与稳定性都比较好，一般不需要sfe(sfe相关的功能我都没有测试过)。
-2. 如不需要sfe可以删除953与613补丁。
-3. 默认的使用方法会把firewall4、libnftnl、nftables替换最新修补后的版本，如你遇到问题可以尝试使用旧版firewall4、libnftnl、nftables。（package分支中有旧版存档）
+2. 默认的使用方法会把firewall4、libnftnl、nftables替换最新修补后的版本，如你遇到问题可以尝试使用旧版firewall4、libnftnl、nftables。（package分支中有旧版存档）
 
 ## 插件预览
 

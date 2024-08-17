@@ -4,6 +4,22 @@
 trap 'rm -rf "$TMPDIR"' EXIT
 TMPDIR=$(mktemp -d) || exit 1
 
+NO_SFE=false
+
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --no-sfe)
+            NO_SFE=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
 if ! [ -d "./package" ]; then
     echo "./package not found"
     exit 1
@@ -15,7 +31,7 @@ if [ -z "$kernel_versions" ]; then
     echo "Error: Unable to get kernel version, script exited"
     exit 1
 fi
-echo "kernel version: $kernel_versions"
+echo "kernel version: $kernel_versions, No SFE: $NO_SFE"
 
 if [ -d "./package/turboacc" ]; then
     echo "./package/turboacc already exists,delete it?[Y/N]"
@@ -40,7 +56,9 @@ else
 fi
 cp -r "$TMPDIR/turboacc/turboacc/luci-app-turboacc" "$TMPDIR/turboacc/luci-app-turboacc"
 rm -rf "$TMPDIR/turboacc/turboacc"
-cp -r "$TMPDIR/package/shortcut-fe" "$TMPDIR/turboacc/shortcut-fe"
+if [ "$NO_SFE" = false ]; then
+    cp -r "$TMPDIR/package/shortcut-fe" "$TMPDIR/turboacc/shortcut-fe"
+fi
 
 for kernel_version in $kernel_versions ;do
     patch_953_path="./target/linux/generic/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch"
@@ -64,13 +82,15 @@ for kernel_version in $kernel_versions ;do
     done
 
     cp -f "$TMPDIR/package/hack-$kernel_version/$patch_952" "$patch_952_path"
-    cp -f "$TMPDIR/package/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch" "$patch_953_path"
-    cp -f "$TMPDIR/package/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch" "$patch_613_path"
+    if [ "$NO_SFE" = false ]; then
+        cp -f "$TMPDIR/package/hack-$kernel_version/953-net-patch-linux-kernel-to-support-shortcut-fe.patch" "$patch_953_path"
+        cp -f "$TMPDIR/package/pending-$kernel_version/613-netfilter_optional_tcp_window_check.patch" "$patch_613_path"
+    fi
 
     if ! grep -q "CONFIG_NF_CONNTRACK_CHAIN_EVENTS" "./target/linux/generic/config-$kernel_version" ; then
         echo "# CONFIG_NF_CONNTRACK_CHAIN_EVENTS is not set" >> "./target/linux/generic/config-$kernel_version"
     fi
-    if ! grep -q "CONFIG_SHORTCUT_FE" "./target/linux/generic/config-$kernel_version" ; then
+    if [ "$NO_SFE" = false ] && ! grep -q "CONFIG_SHORTCUT_FE" "./target/linux/generic/config-$kernel_version" ; then
         echo "# CONFIG_SHORTCUT_FE is not set" >> "./target/linux/generic/config-$kernel_version"
     fi
 done
