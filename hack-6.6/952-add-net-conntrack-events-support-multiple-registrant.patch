@@ -25,7 +25,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 @@ -65,9 +65,14 @@ struct nf_ct_event_notifier {
  	int (*exp_event)(unsigned int events, const struct nf_exp_event *item);
  };
-
+ 
 -void nf_conntrack_register_notifier(struct net *net,
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +extern int nf_conntrack_register_notifier(struct net *net, struct notifier_block *nb);
@@ -35,7 +35,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  				   const struct nf_ct_event_notifier *nb);
  void nf_conntrack_unregister_notifier(struct net *net);
 +#endif
-
+ 
  void nf_ct_deliver_cached_events(struct nf_conn *ct);
  int nf_conntrack_eventmask_report(unsigned int eventmask, struct nf_conn *ct,
 @@ -98,11 +103,13 @@ static inline void
@@ -46,11 +46,11 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	struct nf_conntrack_ecache *e;
 +#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +	struct net *net = nf_ct_net(ct);
-
+ 
  	if (!rcu_access_pointer(net->ct.nf_conntrack_event_cb))
  		return;
 +#endif
-
+ 
  	e = nf_ct_ecache_find(ct);
  	if (e == NULL)
 @@ -117,20 +124,34 @@ nf_conntrack_event_report(enum ip_conntr
@@ -71,7 +71,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	return 0;
 +#endif
  }
-
+ 
  static inline int
  nf_conntrack_event(enum ip_conntrack_events event, struct nf_conn *ct)
  {
@@ -90,13 +90,13 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	return 0;
 +#endif
  }
-
+ 
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
 --- a/include/net/netns/conntrack.h
 +++ b/include/net/netns/conntrack.h
 @@ -105,6 +105,9 @@ struct netns_ct {
  	u8			sysctl_checksum;
-
+ 
  	struct ip_conntrack_stat __percpu *stat;
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +	struct atomic_notifier_head nf_conntrack_chain;
@@ -107,9 +107,9 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
 @@ -161,6 +161,14 @@ config NF_CONNTRACK_EVENTS
-
+ 
  	  If unsure, say `N'.
-
+ 
 +config NF_CONNTRACK_CHAIN_EVENTS
 +	bool "Register multiple callbacks to ct events"
 +	depends on NF_CONNTRACK_EVENTS
@@ -126,13 +126,13 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 @@ -2809,6 +2809,10 @@ int nf_conntrack_init_net(struct net *ne
  	nf_conntrack_ecache_pernet_init(net);
  	nf_conntrack_proto_pernet_init(net);
-
+ 
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +	ATOMIC_INIT_NOTIFIER_HEAD(&net->ct.nf_conntrack_chain);
 +#endif
 +
  	return 0;
-
+ 
  err_expect:
 --- a/net/netfilter/nf_conntrack_ecache.c
 +++ b/net/netfilter/nf_conntrack_ecache.c
@@ -156,10 +156,10 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  					   const u32 events,
  					   const u32 missed,
 @@ -161,7 +164,36 @@ static int __nf_conntrack_eventmask_repo
-
+ 
  	return ret;
  }
-+#endif
++#endif 
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +int nf_conntrack_eventmask_report(unsigned int eventmask, struct nf_conn *ct,
 +				  u32 portid, int report)
@@ -185,7 +185,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
 +
 +		atomic_notifier_call_chain(&net->ct.nf_conntrack_chain, eventmask | missed, &item);
 +	}
-
+ 
 +	return 0;
 +}
 +#else
@@ -193,12 +193,12 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  				  u32 portid, int report)
  {
 @@ -197,10 +229,52 @@ int nf_conntrack_eventmask_report(unsign
-
+ 
  	return ret;
  }
 +#endif
  EXPORT_SYMBOL_GPL(nf_conntrack_eventmask_report);
-
+ 
  /* deliver cached events and clear cache entry - must be called with locally
   * disabled softirqs */
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
@@ -251,12 +251,12 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  }
 +#endif
  EXPORT_SYMBOL_GPL(nf_ct_deliver_cached_events);
-
+ 
  void nf_ct_expect_event_report(enum ip_conntrack_expect_events event,
 @@ -258,20 +333,43 @@ out_unlock:
  	rcu_read_unlock();
  }
-
+ 
 -void nf_conntrack_register_notifier(struct net *net,
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +int nf_conntrack_register_notifier(struct net *net,
@@ -270,7 +270,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  {
 +	int ret;
  	struct nf_ct_event_notifier *notify;
-
+ 
  	mutex_lock(&nf_ct_ecache_mutex);
  	notify = rcu_dereference_protected(net->ct.nf_conntrack_event_cb,
  					   lockdep_is_held(&nf_ct_ecache_mutex));
@@ -289,7 +289,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  }
 +#endif
  EXPORT_SYMBOL_GPL(nf_conntrack_register_notifier);
-
+ 
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +int nf_conntrack_unregister_notifier(struct net *net, struct notifier_block *nb)
 +{
@@ -305,13 +305,13 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  }
 +#endif
  EXPORT_SYMBOL_GPL(nf_conntrack_unregister_notifier);
-
+ 
  void nf_conntrack_ecache_work(struct net *net, enum nf_ct_ecache_state state)
 --- a/net/netfilter/nf_conntrack_netlink.c
 +++ b/net/netfilter/nf_conntrack_netlink.c
 @@ -718,12 +718,19 @@ static size_t ctnetlink_nlmsg_size(const
  }
-
+ 
  static int
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +ctnetlink_conntrack_event(struct notifier_block *this, unsigned long events, void *ptr)
@@ -331,7 +331,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  	unsigned int type;
 @@ -3094,6 +3101,7 @@ nla_put_failure:
  }
-
+ 
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
 +#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
  static int
@@ -342,12 +342,11 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  }
  #endif
 +#endif
-
  static unsigned long ctnetlink_exp_id(const struct nf_conntrack_expect *exp)
  {
 @@ -3750,11 +3759,17 @@ static int ctnetlink_stat_exp_cpu(struct
  }
-
+ 
  #ifdef CONFIG_NF_CONNTRACK_EVENTS
 +#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 +static struct notifier_block ctnl_notifier = {
@@ -360,7 +359,7 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  };
  #endif
 +#endif
-
+ 
  static const struct nfnl_callback ctnl_cb[IPCTNL_MSG_MAX] = {
  	[IPCTNL_MSG_CT_NEW]	= {
 @@ -3853,8 +3868,12 @@ static int __net_init ctnetlink_net_init
@@ -374,5 +373,5 @@ Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
  #endif
 +#endif
  }
-
+ 
  static struct pernet_operations ctnetlink_net_ops = {
