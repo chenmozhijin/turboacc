@@ -89,7 +89,7 @@
 +	 */
 +	if (!skb->fast_forwarded) {
 +#endif
- 	if (dev_nit_active(dev))
+ 	if (dev_nit_active_rcu(dev))
  		dev_queue_xmit_nit(skb, dev);
 +#ifdef CONFIG_SHORTCUT_FE
 +	}
