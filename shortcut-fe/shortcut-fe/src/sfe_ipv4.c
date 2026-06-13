@@ -25,6 +25,7 @@
 
 #include "sfe.h"
 #include "sfe_cm.h"
+#include "sfe_timer_compat.h"
 
 /*
  * By default Linux IP header and transport layer header structures are
@@ -2865,7 +2866,7 @@ static void sfe_ipv4_periodic_sync(struct timer_list *tl)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
 	struct sfe_ipv4 *si = (struct sfe_ipv4 *)arg;
 #else
-	struct sfe_ipv4 *si = from_timer(si, tl, timer);
+	struct sfe_ipv4 *si = sfe_from_timer(si, tl, timer);
 #endif
 	u64 now_jiffies;
 	int quota;
@@ -3585,7 +3586,7 @@ static void __exit sfe_ipv4_exit(void)
 	 */
 	sfe_ipv4_destroy_all_rules_for_dev(NULL);
 
-	del_timer_sync(&si->timer);
+	sfe_timer_delete_sync(&si->timer);
 
 	unregister_chrdev(si->debug_dev, "sfe_ipv4");
 
