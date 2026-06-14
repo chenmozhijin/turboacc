@@ -21,4 +21,5 @@ endif
 shortcut-fe-cm-objs := \
 	sfe_cm.o
 
+ccflags-$(SFE_SUPPORT_IPV6) += -DSFE_SUPPORT_IPV6
 ccflags-y += -Werror -Wall
