@@ -321,9 +321,9 @@ Subject: [PATCH] add net-conntrack-events-support-multiple-registrant for 5.15
  }
  #endif
 +#endif
- static int ctnetlink_exp_done(struct netlink_callback *cb)
+ 
+ static unsigned long ctnetlink_exp_id(const struct nf_conntrack_expect *exp)
  {
- 	if (cb->args[1])
 @@ -3769,11 +3778,17 @@ static int ctnetlink_stat_exp_cpu(struct
  }
  
