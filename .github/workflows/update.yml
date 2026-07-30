@@ -8,6 +8,8 @@ on:
               description: 'test'
               required: false
               type: boolean
+env:
+    TZ: Asia/Shanghai
 permissions:
     contents: write
     discussions: write
@@ -19,7 +21,6 @@ jobs:
         steps:
         - name: 设置时区建立工作文件夹
           run: |
-            sudo timedatectl set-timezone "Asia/Shanghai"
             mkdir -p compare compare/original compare/new clone clone/fullcone-nat-nftables/nft-fullcone clone/coolsnowwolf/lede output/test output/push
             export COMPARE_PATH="$(pwd)/compare"
             export CLONE_PATH="$(pwd)/clone"
@@ -121,9 +122,10 @@ jobs:
             FIREWALL4_VERSION=$(grep -o 'FIREWALL4_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/version" | cut -d '=' -f 2)
             LIBNFTNL_VERSION=$(grep -o 'LIBNFTNL_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/version" | cut -d '=' -f 2)
             NFTABLES_VERSION=$(grep -o 'NFTABLES_VERSION=.*' "$CLONE_PATH/chenmozhijin/turboacc/version" | cut -d '=' -f 2)
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/firewall4-$FIREWALL4_VERSION/firewall4/patches/ $COMPARE_PATH/new/firewall4/patches/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/nftables-$NFTABLES_VERSION/nftables/patches/ $COMPARE_PATH/new/nftables/patches/
-            cp -RT $CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_VERSION/libnftnl/patches/ $COMPARE_PATH/new/libnftnl/patches/
+            # Carry only project-owned patches into the current OpenWrt package.
+            find "$CLONE_PATH/chenmozhijin/turboacc/firewall4-$FIREWALL4_VERSION/firewall4/patches" -maxdepth 1 -type f -name '999-*.patch' -exec cp -f {} "$COMPARE_PATH/new/firewall4/patches/" \;
+            find "$CLONE_PATH/chenmozhijin/turboacc/nftables-$NFTABLES_VERSION/nftables/patches" -maxdepth 1 -type f -name '999-*.patch' -exec cp -f {} "$COMPARE_PATH/new/nftables/patches/" \;
+            find "$CLONE_PATH/chenmozhijin/turboacc/libnftnl-$LIBNFTNL_VERSION/libnftnl/patches" -maxdepth 1 -type f -name '999-*.patch' -exec cp -f {} "$COMPARE_PATH/new/libnftnl/patches/" \;
             FIREWALL4_NEW_VERSION=$(grep -o 'PKG_SOURCE_VERSION:=.*' $COMPARE_PATH/new/firewall4/Makefile | cut -d '=' -f 2)
             NFTABLES_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/nftables/Makefile | cut -d '=' -f 2)
             LIBNFTNL_NEW_VERSION=$(grep -o 'PKG_VERSION:=.*' $COMPARE_PATH/new/libnftnl/Makefile | cut -d '=' -f 2)
@@ -248,7 +250,6 @@ jobs:
               sudo -E systemctl daemon-reload 
               sudo -E apt -y autoremove --purge
               sudo -E apt clean
-              sudo timedatectl set-timezone "Asia/Shanghai"
     
           - name: 克隆源代码
             run: |
